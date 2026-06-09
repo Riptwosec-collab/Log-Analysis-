@@ -1,0 +1,68 @@
+'use client';
+import { useState } from 'react';
+
+export default function SOCDashboard() {
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [result, setResult] = useState<any>(null);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsAnalyzing(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Network response was not ok');
+      
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      console.error("Upload failed", error);
+      alert("เกิดข้อผิดพลาดในการวิเคราะห์ไฟล์");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-200 p-8 font-sans">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <header className="border-b border-slate-700 pb-4">
+            <h1 className="text-3xl font-bold text-blue-400">🛡️ SOC Analytics Dashboard</h1>
+        </header>
+
+        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+          <h2 className="text-xl font-semibold mb-4 text-white">Upload Log File</h2>
+          <div className="relative border-2 border-dashed border-slate-500 rounded-lg p-10 text-center hover:border-blue-500 transition-colors bg-slate-800/50">
+            <input 
+              type="file" 
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+              onChange={handleFileUpload}
+              accept=".log,.txt,.csv"
+              disabled={isAnalyzing}
+            />
+            <p className="text-lg font-medium text-slate-300">
+              {isAnalyzing ? "🤖 AI กำลังวิเคราะห์ข้อมูล..." : "ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์"}
+            </p>
+          </div>
+        </div>
+
+        {result && (
+          <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+            <h2 className="text-xl font-semibold text-white mb-4">Analysis Result</h2>
+            <pre className="bg-slate-950 p-4 rounded-lg text-green-400 text-xs overflow-x-auto border border-slate-800">
+                {JSON.stringify(result, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
