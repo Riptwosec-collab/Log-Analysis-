@@ -16,8 +16,25 @@ type Finding = {
   impact: string;
   recommendedFix: string;
   sourceIp: string | null;
+  destinationIp: string | null;
+  destinationPort: string | null;
+  username: string | null;
+  asset: string | null;
+  tactic: string;
+  technique: string;
+  confidence: number;
+  evidence: string;
   raw: string;
   repeatedCount: number;
+};
+
+type Correlation = {
+  title: string;
+  severity: Severity;
+  sourceIp: string | null;
+  eventCount: number;
+  description: string;
+  recommendedAction: string;
 };
 
 type AnalysisResult = {
@@ -28,18 +45,31 @@ type AnalysisResult = {
     criticalAlerts: number;
     failedLogins: number;
     topSourceIp: string | null;
+    riskScore: number;
+    riskLevel: Severity;
+    incidentNarrative: string;
     logTypes: Record<string, number>;
     severityCounts: Record<Severity, number>;
     timeline: Array<{ timestamp: string; count: number; severity: Severity }>;
+    topRules: Array<{ rule: string; count: number; severity: Severity }>;
+    affectedUsers: string[];
+    targetPorts: string[];
+    mitreTechniques: string[];
+    recommendedActions: string[];
+    correlations: Correlation[];
   };
   findings: Finding[];
 };
 
 const demoLog = `Jun 10 21:14:02 web-01 sshd[1204]: Failed password for invalid user admin from 185.220.101.21 port 55110 ssh2
 Jun 10 21:14:08 web-01 sshd[1208]: Failed password for root from 185.220.101.21 port 55116 ssh2
+Jun 10 21:14:14 web-01 sshd[1213]: Failed password for invalid user oracle from 185.220.101.21 port 55122 ssh2
+Jun 10 21:14:20 web-01 sshd[1219]: Failed password for invalid user postgres from 185.220.101.21 port 55130 ssh2
 2026-06-10T21:16:40Z 198.51.100.44 "GET /login.php?id=1 UNION SELECT password FROM users HTTP/1.1" 403
 2026-06-10T21:17:11Z 203.0.113.9 "GET /download?file=../../../../etc/passwd HTTP/1.1" 400
 2026-06-10T21:18:27Z firewall DROP SRC=45.77.10.2 DST=10.0.0.12 PROTO=TCP DPT=22 SYN
+2026-06-10T21:18:31Z firewall DROP SRC=45.77.10.2 DST=10.0.0.12 PROTO=TCP DPT=80 SYN
+2026-06-10T21:18:35Z firewall DROP SRC=45.77.10.2 DST=10.0.0.12 PROTO=TCP DPT=443 SYN
 06/10/2026 09:19:44 PM Event ID 4625 Audit Failure Account Name: svc-backup Source Network Address: 192.0.2.71`;
 
 const severityOptions: Array<Severity | "All"> = ["All", "Critical", "High", "Medium", "Low"];
@@ -100,6 +130,10 @@ export default function SOCDashboard() {
           finding.rule,
           finding.raw,
           finding.sourceIp || "",
+          finding.destinationPort || "",
+          finding.username || "",
+          finding.technique,
+          finding.tactic,
           finding.detectedKeywords.join(" "),
           finding.possibleRootCause,
           finding.recommendedFix,
@@ -137,13 +171,13 @@ export default function SOCDashboard() {
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-cyan-300">Log Analysis</p>
             <h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">SOC Analytics Dashboard</h1>
             <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-              Analyze Apache/Nginx, SSH auth, firewall, Windows Event, Linux syslog, and generic application logs.
+              Correlate attack signals across Apache/Nginx, SSH auth, firewall, Windows Event, Linux syslog, and application logs.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-2 text-right text-xs text-zinc-400 sm:min-w-80">
-            <Metric label="Rules" value="8" />
+            <Metric label="Rules" value="12" />
             <Metric label="Types" value="6" />
-            <Metric label="Export" value="3" />
+            <Metric label="Intel" value="MITRE" />
           </div>
         </header>
 
@@ -187,10 +221,12 @@ export default function SOCDashboard() {
           <aside className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
             <h2 className="text-lg font-semibold text-white">Summary</h2>
             <div className="mt-4 grid grid-cols-2 gap-3">
+              <Metric label="Risk Score" value={String(result?.summary.riskScore || 0)} tone={result?.summary.riskLevel === "Critical" ? "critical" : "warning"} />
               <Metric label="Total Events" value={String(result?.summary.totalEvents || 0)} />
               <Metric label="Suspicious" value={String(result?.summary.suspiciousEvents || 0)} />
               <Metric label="Critical" value={String(result?.summary.criticalAlerts || 0)} tone="critical" />
               <Metric label="Failed Login" value={String(result?.summary.failedLogins || 0)} tone="warning" />
+              <Metric label="Correlations" value={String(result?.summary.correlations.length || 0)} />
             </div>
             <div className="mt-4 rounded-md border border-zinc-800 bg-black p-3">
               <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">Top Source IP</p>
@@ -202,6 +238,58 @@ export default function SOCDashboard() {
 
         {result && (
           <>
+            <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+              <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">Incident Intelligence</h2>
+                    <p className="mt-2 text-sm leading-6 text-zinc-400">{result.summary.incidentNarrative}</p>
+                  </div>
+                  <span className={`w-fit rounded px-3 py-1 text-xs font-semibold ${severityClass(result.summary.riskLevel)}`}>
+                    {result.summary.riskLevel}
+                  </span>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                  <IntelList title="Top Rules" items={result.summary.topRules.map((item) => `${item.rule} (${item.count})`)} />
+                  <IntelList title="MITRE Techniques" items={result.summary.mitreTechniques} />
+                  <IntelList title="Affected Users" items={result.summary.affectedUsers.length ? result.summary.affectedUsers : ["None"]} />
+                </div>
+
+                <div className="mt-4 rounded-md border border-zinc-800 bg-black p-3">
+                  <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">Priority Actions</p>
+                  <div className="mt-3 grid gap-2 md:grid-cols-2">
+                    {result.summary.recommendedActions.slice(0, 4).map((action) => (
+                      <p key={action} className="border-l-2 border-cyan-500 pl-3 text-sm leading-5 text-zinc-300">
+                        {action}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+                <h2 className="text-lg font-semibold text-white">Correlations</h2>
+                <div className="mt-4 space-y-3">
+                  {result.summary.correlations.length === 0 && (
+                    <p className="text-sm text-zinc-500">No multi-event correlation was detected.</p>
+                  )}
+                  {result.summary.correlations.map((item) => (
+                    <div key={`${item.title}-${item.sourceIp || "global"}`} className="rounded-md border border-zinc-800 bg-black p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-semibold text-white">{item.title}</p>
+                        <span className={`rounded px-2 py-1 text-xs font-semibold ${severityClass(item.severity)}`}>
+                          {item.severity}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm leading-5 text-zinc-400">{item.description}</p>
+                      <p className="mt-2 text-xs text-cyan-300">{item.recommendedAction}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
               <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -253,14 +341,17 @@ export default function SOCDashboard() {
                 </div>
 
                 <div className="mt-4 overflow-x-auto">
-                  <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+                  <table className="w-full min-w-[1220px] border-collapse text-left text-sm">
                     <thead className="border-b border-zinc-800 text-xs uppercase tracking-[0.14em] text-zinc-500">
                       <tr>
                         <th className="py-3 pr-3">ID</th>
                         <th className="py-3 pr-3">Severity</th>
+                        <th className="py-3 pr-3">Confidence</th>
                         <th className="py-3 pr-3">Type</th>
                         <th className="py-3 pr-3">Timestamp</th>
                         <th className="py-3 pr-3">Source</th>
+                        <th className="py-3 pr-3">User/Port</th>
+                        <th className="py-3 pr-3">Technique</th>
                         <th className="py-3 pr-3">Rule</th>
                         <th className="py-3 pr-3">Repeat</th>
                       </tr>
@@ -274,11 +365,21 @@ export default function SOCDashboard() {
                               {finding.severity}
                             </span>
                           </td>
+                          <td className="py-3 pr-3 font-mono text-xs text-zinc-300">{finding.confidence}%</td>
                           <td className="py-3 pr-3 text-zinc-300">{finding.logType}</td>
                           <td className="py-3 pr-3 font-mono text-xs text-zinc-400">{finding.timestamp || "Unknown"}</td>
                           <td className="py-3 pr-3 font-mono text-xs text-cyan-300">{finding.sourceIp || "-"}</td>
+                          <td className="py-3 pr-3 text-xs text-zinc-300">
+                            <p>{finding.username || "-"}</p>
+                            <p className="mt-1 font-mono text-zinc-500">{finding.destinationPort ? `:${finding.destinationPort}` : ""}</p>
+                          </td>
+                          <td className="py-3 pr-3">
+                            <p className="text-xs font-medium text-zinc-200">{finding.technique}</p>
+                            <p className="mt-1 text-xs text-zinc-500">{finding.tactic}</p>
+                          </td>
                           <td className="py-3 pr-3">
                             <p className="font-medium text-white">{finding.rule}</p>
+                            <p className="mt-1 text-xs text-cyan-300">Evidence: {finding.evidence}</p>
                             <p className="mt-1 max-w-xl text-xs leading-5 text-zinc-400">{finding.raw}</p>
                           </td>
                           <td className="py-3 pr-3 font-mono text-zinc-300">{finding.repeatedCount}</td>
@@ -345,6 +446,21 @@ function Metric({ label, value, tone = "default" }: { label: string; value: stri
   );
 }
 
+function IntelList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded-md border border-zinc-800 bg-black p-3">
+      <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">{title}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {items.slice(0, 6).map((item) => (
+          <span key={item} className="rounded border border-zinc-700 px-2 py-1 text-xs text-zinc-300">
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SeverityBars({ counts }: { counts?: Record<Severity, number> }) {
   const safeCounts = counts || { Low: 0, Medium: 0, High: 0, Critical: 0 };
   const max = Math.max(1, ...Object.values(safeCounts));
@@ -387,16 +503,41 @@ function buildExport(format: "json" | "csv" | "txt", result: AnalysisResult, fin
 
   if (format === "csv") {
     const rows = [
-      ["id", "line", "severity", "type", "timestamp", "source_ip", "rule", "repeat", "keywords", "recommendation"],
+      [
+        "id",
+        "line",
+        "severity",
+        "confidence",
+        "type",
+        "timestamp",
+        "source_ip",
+        "destination_ip",
+        "destination_port",
+        "username",
+        "rule",
+        "tactic",
+        "technique",
+        "repeat",
+        "evidence",
+        "keywords",
+        "recommendation",
+      ],
       ...findings.map((finding) => [
         finding.id,
         String(finding.lineNumber),
         finding.severity,
+        String(finding.confidence),
         finding.logType,
         finding.timestamp || "",
         finding.sourceIp || "",
+        finding.destinationIp || "",
+        finding.destinationPort || "",
+        finding.username || "",
         finding.rule,
+        finding.tactic,
+        finding.technique,
         String(finding.repeatedCount),
+        finding.evidence,
         finding.detectedKeywords.join("|"),
         finding.recommendedFix,
       ]),
@@ -410,11 +551,22 @@ function buildExport(format: "json" | "csv" | "txt", result: AnalysisResult, fin
     `Total events: ${result.summary.totalEvents}`,
     `Suspicious events: ${result.summary.suspiciousEvents}`,
     `Critical alerts: ${result.summary.criticalAlerts}`,
+    `Risk score: ${result.summary.riskScore}/100 (${result.summary.riskLevel})`,
     `Top source IP: ${result.summary.topSourceIp || "None"}`,
+    `Narrative: ${result.summary.incidentNarrative}`,
+    `MITRE techniques: ${result.summary.mitreTechniques.join(", ") || "None"}`,
     "",
+    "Correlations",
+    ...(result.summary.correlations.length
+      ? result.summary.correlations.map((item) => `${item.severity} | ${item.title} | ${item.description} | ${item.recommendedAction}`)
+      : ["None"]),
+    "",
+    "Findings",
     ...findings.flatMap((finding) => [
-      `${finding.id} | ${finding.severity} | ${finding.logType} | ${finding.rule}`,
-      `Timestamp: ${finding.timestamp || "Unknown"} | Source: ${finding.sourceIp || "-"}`,
+      `${finding.id} | ${finding.severity} | ${finding.confidence}% | ${finding.logType} | ${finding.rule}`,
+      `Timestamp: ${finding.timestamp || "Unknown"} | Source: ${finding.sourceIp || "-"} | User: ${finding.username || "-"} | Port: ${finding.destinationPort || "-"}`,
+      `Technique: ${finding.technique} | Tactic: ${finding.tactic}`,
+      `Evidence: ${finding.evidence}`,
       `Keywords: ${finding.detectedKeywords.join(", ") || "n/a"}`,
       `Root cause: ${finding.possibleRootCause}`,
       `Impact: ${finding.impact}`,

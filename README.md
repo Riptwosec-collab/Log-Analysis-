@@ -6,9 +6,11 @@ SOC Analytics Dashboard is a Next.js log analysis tool for quickly triaging susp
 
 - Rule-based log analysis that works without an API key.
 - Supports Apache/Nginx, SSH auth, firewall, Windows Event, Linux syslog, and generic application logs.
-- Security detections for brute force login, SQL injection, path traversal, port scan or blocked probe, repeated denied access, service timeout/down events, Windows audit events, and generic errors.
-- SOC-style dashboard cards for total events, suspicious events, critical alerts, failed logins, and top source IP.
-- Event table with severity, detected log type, timestamp, source IP, rule name, raw log line, and repeated event count.
+- Security detections for brute force login, SQL injection, path traversal, XSS, command injection, web shell upload attempts, port scan or blocked probe, repeated denied access, service timeout/down events, privilege escalation signals, suspicious outbound transfer, Windows audit events, and generic errors.
+- Correlation logic for credential attack bursts, multi-port reconnaissance, web exploitation chains, and availability degradation spikes.
+- SOC-style dashboard cards for risk score, total events, suspicious events, critical alerts, failed logins, correlations, and top source IP.
+- Incident intelligence panel with narrative summary, MITRE ATT&CK techniques, top rules, affected users, and priority actions.
+- Event table with severity, confidence, detected log type, timestamp, source IP, username, destination port, MITRE technique, evidence, raw log line, and repeated event count.
 - Search and filters by keyword, severity, log type, and timestamp text.
 - Export filtered reports as TXT, CSV, or JSON.
 - Sample log files included for fast testing.
@@ -76,7 +78,13 @@ Use these files to test specific detections:
 The analyzer returns:
 
 - `Severity`: Low, Medium, High, or Critical.
+- `Risk score`: 0-100 incident score calculated from severity, confidence, finding density, and correlations.
+- `Risk level`: Low, Medium, High, or Critical derived from the risk score.
+- `Incident narrative`: short analyst-oriented summary of the primary concern.
 - `Detected keywords`: keywords matched in the log line.
+- `Confidence`: rule confidence adjusted upward for repeated correlated activity.
+- `MITRE technique`: mapped tactic/technique such as `T1110 Brute Force`.
+- `Correlation`: multi-event findings such as credential bursts or multi-port scans.
 - `Possible root cause`: likely explanation for the event.
 - `Impact`: why the event matters.
 - `Recommended fix`: next action for triage or remediation.
@@ -89,19 +97,25 @@ Example JSON shape:
 {
   "generatedAt": "2026-06-10T14:20:00.000Z",
   "summary": {
-    "totalEvents": 6,
-    "suspiciousEvents": 5,
-    "criticalAlerts": 2,
-    "failedLogins": 2,
-    "topSourceIp": "185.220.101.21"
+    "totalEvents": 10,
+    "suspiciousEvents": 10,
+    "criticalAlerts": 6,
+    "failedLogins": 5,
+    "topSourceIp": "185.220.101.21",
+    "riskScore": 100,
+    "riskLevel": "Critical",
+    "mitreTechniques": ["T1110 Brute Force", "T1046 Network Service Discovery"]
   },
   "findings": [
     {
       "id": "EVT-0001",
       "severity": "Critical",
+      "confidence": 99,
       "logType": "SSH Auth",
       "rule": "Brute force login",
-      "sourceIp": "185.220.101.21"
+      "sourceIp": "185.220.101.21",
+      "username": "admin",
+      "technique": "T1110 Brute Force"
     }
   ]
 }
