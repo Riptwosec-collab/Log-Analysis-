@@ -1,9 +1,15 @@
-import './globals.css';
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "SOC Analytics Dashboard",
+  description: "Rule-based log analysis dashboard for common security events.",
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <title>SOC Dashboard</title>
-      <body className="bg-slate-900 text-slate-200">{children}</body>
+      <body className="bg-zinc-950 text-zinc-100">{children}</body>
     </html>
   );
 }

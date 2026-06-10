@@ -1,1 +1,0 @@
-f.onchange=e=>{r=new FileReader;r.onload=_=>t.value=r.result;r.readAsText(e.target.files[0])};a=_=>{x=t.value.toLowerCase();k=['error','fail','deny','timeout','down'].filter(v=>x.includes(v));o.textContent='Severity: '+(k.length>1?'High':'Low')+'\nKeyword: '+(k||'-')+'\nRoot Cause: '+(k[0]||'normal')+'\nImpact: service may be affected\nFix: check device/service/config'}

@@ -1,5 +1,5 @@
 {
-  "name": "soc-dashboard",
+  "name": "log-analysis",
   "version": "0.1.0",
   "private": true,
   "scripts": {
