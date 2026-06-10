@@ -1,0 +1,1 @@
+export default function Home(){return <main style={{minHeight:'100vh',padding:40,background:'#0f172a',color:'#e2e8f0',fontFamily:'Arial'}}><h1>Log Analysis</h1><p>Next.js app is running on Vercel.</p><p>หน้าเว็บพร้อมใช้งานแล้ว</p></main>}
