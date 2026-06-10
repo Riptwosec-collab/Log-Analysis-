@@ -1,0 +1,2 @@
+document.getElementById('f').onchange=e=>{let r=new FileReader();r.onload=()=>t.value=r.result;r.readAsText(e.target.files[0])};
+function a(){let x=t.value;if(!x.trim()){o.textContent='กรุณาใส่ Log ก่อน';return}let l=x.toLowerCase(),k=['error','failed','fail','deny','denied','timeout','critical','down','unauthorized','blocked','auth','vpn','radius','dhcp','dns','link'];let h=k.filter(w=>l.includes(w));let sev=h.includes('critical')||h.includes('down')?'High':h.length>2?'Medium':'Low';let cause
