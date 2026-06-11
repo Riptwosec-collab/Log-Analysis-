@@ -1,33 +1,19 @@
 export type Severity = "Low" | "Medium" | "High" | "Critical";
+export type LogType = "Apache/Nginx" | "SSH Auth" | "Firewall" | "Windows Event" | "Linux Syslog" | "Cisco IOS" | "Meraki" | "Network Device" | "Application" | "Generic";
 
-export type LogType =
-  | "Apache/Nginx"
-  | "SSH Auth"
-  | "Firewall"
-  | "Windows Event"
-  | "Linux Syslog"
-  | "Cisco IOS"
-  | "Meraki"
-  | "Network Device"
-  | "Application"
-  | "Generic";
-
-export type ParsedFields = {
-  eventId: string | null;
-  interfaceName: string | null;
-  vlan: string | null;
-  macAddress: string | null;
-  action: string | null;
-  protocol: string | null;
-  httpMethod: string | null;
-  urlPath: string | null;
-  statusCode: string | null;
+type Rule = {
+  name: string;
+  severity: Severity;
+  logType?: LogType;
+  patterns: RegExp[];
+  keywords: string[];
+  rootCause: string;
+  impact: string;
+  fix: string;
+  tactic: string;
+  technique: string;
+  confidence: number;
 };
 
-export type IocMatch = {
-  value: string;
-  type: "ip" | "domain" | "hash" | "keyword";
-  severity: Severity;
-  risk: number;
-  source: string;
-  note
+export type Finding = {
+  id: string;
