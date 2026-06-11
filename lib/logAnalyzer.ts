@@ -1,6 +1,4 @@
-from pathlib import Path
-
-content = r'''export type Severity = "Low" | "Medium" | "High" | "Critical";
+export type Severity = "Low" | "Medium" | "High" | "Critical";
 
 export type LogType =
   | "Apache/Nginx"
@@ -111,19 +109,19 @@ const privateIpPatterns = [
 
 const iocList: Record<string, { type: string; risk: Severity; description: string }> = {
   "185.220.101.21": {
-    type: "Tor / suspicious source",
+    type: "Tor / แหล่งที่น่าสงสัย",
     risk: "High",
-    description: "Known suspicious example IP frequently used in security demos.",
+    description: "IP ตัวอย่างที่ถูกจัดเป็นแหล่งที่น่าสงสัย ใช้สำหรับทดสอบเหตุการณ์ด้านความปลอดภัย",
   },
   "45.77.10.2": {
-    type: "Scanner",
+    type: "แหล่งสแกนระบบ",
     risk: "High",
-    description: "Example scanning source used for firewall and port-scan demos.",
+    description: "IP ตัวอย่างที่มีพฤติกรรมสแกนพอร์ต ใช้สำหรับทดสอบ Firewall / Port Scan",
   },
   "198.51.100.44": {
-    type: "Web attack source",
+    type: "แหล่งโจมตีเว็บ",
     risk: "High",
-    description: "Example source for web exploitation demos.",
+    description: "IP ตัวอย่างที่ใช้จำลองการโจมตีเว็บแอปพลิเคชัน",
   },
 };
 
@@ -141,110 +139,110 @@ const windowsEventMap: Record<
   }
 > = {
   "4624": {
-    rule: "Windows successful logon",
+    rule: "Windows: เข้าสู่ระบบสำเร็จ",
     severity: "Low",
     tactic: "Initial Access",
     technique: "T1078 Valid Accounts",
-    rootCause: "A Windows account logged on successfully.",
-    impact: "Usually normal, but suspicious if it follows many failed logons or comes from an unusual source.",
-    fix: "Review the source IP, account name, logon type, and nearby failed logon events.",
+    rootCause: "พบบัญชี Windows เข้าสู่ระบบสำเร็จ",
+    impact: "โดยทั่วไปอาจเป็นเหตุการณ์ปกติ แต่ควรตรวจสอบถ้าเกิดหลังจาก login fail หลายครั้ง หรือมาจากแหล่งที่ผิดปกติ",
+    fix: "ตรวจสอบ Source IP, Account Name, Logon Type และเหตุการณ์ login fail ในช่วงเวลาใกล้เคียง",
     confidence: 62,
   },
   "4625": {
-    rule: "Windows failed logon",
+    rule: "Windows: เข้าสู่ระบบไม่สำเร็จ",
     severity: "Medium",
     tactic: "Credential Access",
     technique: "T1110 Brute Force",
-    rootCause: "A Windows account authentication attempt failed.",
-    impact: "Repeated failures may indicate brute force, password spray, service password mismatch, or locked credentials.",
-    fix: "Check the account, source address, logon type, lockout status, and successful logons after the failures.",
+    rootCause: "พบบัญชี Windows พยายามยืนยันตัวตนไม่สำเร็จ",
+    impact: "ถ้าเกิดซ้ำหลายครั้ง อาจเป็น Brute Force, Password Spray, รหัสผ่าน Service ผิด หรือ Credential ถูกล็อก",
+    fix: "ตรวจสอบบัญชี, Source IP, Logon Type, สถานะ Lockout และ login สำเร็จหลังจากเหตุการณ์ล้มเหลว",
     confidence: 82,
   },
   "4672": {
-    rule: "Windows special privileges assigned",
+    rule: "Windows: มีการใช้สิทธิ์พิเศษ",
     severity: "High",
     tactic: "Privilege Escalation",
     technique: "T1078 Valid Accounts",
-    rootCause: "A privileged account logged on and received special privileges.",
-    impact: "If unexpected, this may indicate administrator account misuse or privilege escalation.",
-    fix: "Validate the admin user, source host, approval record, and activity performed after logon.",
+    rootCause: "พบบัญชีสิทธิ์สูงเข้าสู่ระบบและได้รับสิทธิ์พิเศษ",
+    impact: "ถ้าไม่ได้คาดหมาย อาจเป็นการใช้งานบัญชีผู้ดูแลระบบผิดปกติ หรือการยกระดับสิทธิ์",
+    fix: "ตรวจสอบผู้ใช้ admin, เครื่องต้นทาง, เอกสารอนุมัติ และกิจกรรมหลังจาก login",
     confidence: 84,
   },
   "4688": {
-    rule: "Windows process creation",
+    rule: "Windows: มีการสร้าง Process",
     severity: "Medium",
     tactic: "Execution",
     technique: "T1059 Command and Scripting Interpreter",
-    rootCause: "A new process was created on a Windows endpoint.",
-    impact: "May indicate suspicious execution when paired with PowerShell, encoded commands, or unusual parent process.",
-    fix: "Check process command line, parent process, user, hash, and endpoint telemetry.",
+    rootCause: "พบการสร้าง Process ใหม่บนเครื่อง Windows",
+    impact: "อาจน่าสงสัยถ้าเกี่ยวข้องกับ PowerShell, encoded command หรือ parent process ที่ผิดปกติ",
+    fix: "ตรวจสอบ command line, parent process, user, hash และข้อมูลจาก Endpoint Security",
     confidence: 70,
   },
   "4720": {
-    rule: "Windows account created",
+    rule: "Windows: มีการสร้างบัญชีใหม่",
     severity: "High",
     tactic: "Persistence",
     technique: "T1136 Create Account",
-    rootCause: "A new Windows account was created.",
-    impact: "Could be normal administration or attacker persistence.",
-    fix: "Confirm change request, creator account, group membership, and whether the account was used.",
+    rootCause: "พบการสร้างบัญชี Windows ใหม่",
+    impact: "อาจเป็นงานดูแลระบบปกติ หรือเป็นการสร้างบัญชีเพื่อฝังตัวของผู้โจมตี",
+    fix: "ตรวจสอบ Change Request, ผู้สร้างบัญชี, Group Membership และการใช้งานบัญชีนั้น",
     confidence: 86,
   },
   "4728": {
-    rule: "Windows user added to privileged group",
+    rule: "Windows: เพิ่มผู้ใช้เข้ากลุ่มสิทธิ์สูง",
     severity: "Critical",
     tactic: "Privilege Escalation",
     technique: "T1098 Account Manipulation",
-    rootCause: "A user was added to a security-enabled global group.",
-    impact: "Could grant elevated access or enable persistence.",
-    fix: "Verify the requester, group, target user, and remove unauthorized membership immediately.",
+    rootCause: "พบการเพิ่มผู้ใช้เข้ากลุ่มที่มีผลต่อสิทธิ์ความปลอดภัย",
+    impact: "อาจทำให้ผู้ใช้ได้รับสิทธิ์สูงขึ้น หรือใช้เป็นช่องทางคงสิทธิ์ในระบบ",
+    fix: "ตรวจสอบผู้ร้องขอ, กลุ่ม, ผู้ใช้เป้าหมาย และลบสิทธิ์ทันทีถ้าไม่ได้รับอนุญาต",
     confidence: 90,
   },
   "4732": {
-    rule: "Windows user added to local group",
+    rule: "Windows: เพิ่มผู้ใช้เข้ากลุ่ม Local",
     severity: "High",
     tactic: "Privilege Escalation",
     technique: "T1098 Account Manipulation",
-    rootCause: "A user was added to a local group.",
-    impact: "If the group is privileged, the user may gain local admin capability.",
-    fix: "Review local group name, target user, admin approver, and endpoint activity.",
+    rootCause: "พบการเพิ่มผู้ใช้เข้ากลุ่มภายในเครื่อง",
+    impact: "ถ้ากลุ่มนั้นมีสิทธิ์สูง ผู้ใช้อาจได้รับสิทธิ์ Local Admin",
+    fix: "ตรวจสอบชื่อกลุ่ม, ผู้ใช้เป้าหมาย, ผู้อนุมัติ และกิจกรรมบนเครื่อง",
     confidence: 86,
   },
   "4740": {
-    rule: "Windows account locked out",
+    rule: "Windows: บัญชีถูกล็อก",
     severity: "Medium",
     tactic: "Credential Access",
     technique: "T1110 Brute Force",
-    rootCause: "A Windows account was locked out after authentication failures.",
-    impact: "May indicate brute force, password spray, stale service password, or user error.",
-    fix: "Identify the lockout source, check scheduled tasks/services, and reset credentials if needed.",
+    rootCause: "พบบัญชี Windows ถูกล็อกจากการยืนยันตัวตนผิดพลาด",
+    impact: "อาจเกิดจาก Brute Force, Password Spray, Service ใช้รหัสผ่านเก่า หรือผู้ใช้กรอกรหัสผิด",
+    fix: "หาแหล่งที่ทำให้บัญชีล็อก ตรวจสอบ Scheduled Task/Service และรีเซ็ตรหัสผ่านถ้าจำเป็น",
     confidence: 82,
   },
   "4768": {
-    rule: "Kerberos authentication ticket requested",
+    rule: "Kerberos: มีการขอ Authentication Ticket",
     severity: "Low",
     tactic: "Credential Access",
     technique: "T1558 Steal or Forge Kerberos Tickets",
-    rootCause: "A Kerberos TGT request occurred.",
-    impact: "Often normal, but suspicious in bulk or with unusual encryption/pre-auth errors.",
-    fix: "Review account, source host, failure codes, and abnormal volume.",
+    rootCause: "พบการขอ Kerberos TGT",
+    impact: "มักเป็นเหตุการณ์ปกติ แต่ควรตรวจสอบถ้าเกิดจำนวนมาก หรือมี pre-auth/encryption ผิดปกติ",
+    fix: "ตรวจสอบบัญชี, เครื่องต้นทาง, Failure Code และปริมาณที่ผิดปกติ",
     confidence: 58,
   },
   "4769": {
-    rule: "Kerberos service ticket requested",
+    rule: "Kerberos: มีการขอ Service Ticket",
     severity: "Medium",
     tactic: "Credential Access",
     technique: "T1558 Steal or Forge Kerberos Tickets",
-    rootCause: "A Kerberos service ticket request occurred.",
-    impact: "Could be normal or indicate Kerberoasting when many service tickets are requested.",
-    fix: "Check service accounts, encryption type, volume, and suspicious requesting hosts.",
+    rootCause: "พบการขอ Kerberos Service Ticket",
+    impact: "อาจเป็นเหตุการณ์ปกติ หรือเป็นสัญญาณ Kerberoasting ถ้ามีการขอ ticket จำนวนมาก",
+    fix: "ตรวจสอบ Service Account, Encryption Type, ปริมาณ และเครื่องที่ร้องขอผิดปกติ",
     confidence: 72,
   },
 };
 
 const rules: Rule[] = [
   {
-    name: "SSH brute force login",
+    name: "SSH: พยายามเดารหัสผ่าน",
     severity: "High",
     logTypes: ["SSH Auth", "Linux Syslog"],
     patterns: [
@@ -255,28 +253,28 @@ const rules: Rule[] = [
       /failed publickey/i,
     ],
     keywords: ["failed password", "authentication failure", "invalid user", "sshd"],
-    rootCause: "Repeated SSH authentication failures were detected.",
-    impact: "The targeted account or server may be under brute force or password spraying attack.",
-    fix: "Block or rate-limit the source IP, review successful logons from the same IP, enforce MFA, disable password login, and restrict SSH to VPN or management IPs.",
+    rootCause: "พบการยืนยันตัวตน SSH ล้มเหลวซ้ำหลายครั้ง",
+    impact: "บัญชีหรือ Server เป้าหมายอาจกำลังถูก Brute Force หรือ Password Spray",
+    fix: "Block หรือจำกัดความถี่ Source IP, ตรวจสอบ login สำเร็จจาก IP เดียวกัน, เปิดใช้ MFA, ปิด password login และจำกัด SSH ให้เข้าได้เฉพาะ VPN/Management IP",
     tactic: "Credential Access",
     technique: "T1110 Brute Force",
     confidence: 84,
   },
   {
-    name: "SSH successful login",
+    name: "SSH: เข้าสู่ระบบสำเร็จ",
     severity: "Medium",
     logTypes: ["SSH Auth", "Linux Syslog"],
     patterns: [/accepted password/i, /accepted publickey/i, /session opened for user/i],
     keywords: ["accepted password", "accepted publickey", "session opened"],
-    rootCause: "An SSH login succeeded.",
-    impact: "May be normal, but suspicious if it follows many failed attempts or uses an unusual account/source.",
-    fix: "Validate the user, source IP, geolocation, and commands executed after login.",
+    rootCause: "พบการเข้าสู่ระบบผ่าน SSH สำเร็จ",
+    impact: "อาจเป็นเหตุการณ์ปกติ แต่ควรตรวจสอบถ้าเกิดหลังจากพยายาม login fail หลายครั้ง หรือมาจากบัญชี/IP ที่ผิดปกติ",
+    fix: "ตรวจสอบผู้ใช้, Source IP, ตำแหน่งที่มา และคำสั่งที่รันหลังจาก login",
     tactic: "Initial Access",
     technique: "T1078 Valid Accounts",
     confidence: 72,
   },
   {
-    name: "SQL injection pattern",
+    name: "SQL Injection",
     severity: "Critical",
     logTypes: ["Apache/Nginx", "Application", "Generic"],
     patterns: [
@@ -290,15 +288,15 @@ const rules: Rule[] = [
       /select.+from.+where/i,
     ],
     keywords: ["union select", "or 1=1", "sleep(", "information_schema", "sqlmap"],
-    rootCause: "A request contained payloads commonly used for SQL injection.",
-    impact: "The application may be exposed to database extraction, login bypass, or data modification.",
-    fix: "Use prepared statements, validate input, review vulnerable endpoint code, add WAF rules, and inspect database logs for successful queries.",
+    rootCause: "พบ Request ที่มีรูปแบบ Payload ที่ใช้โจมตี SQL Injection",
+    impact: "ระบบอาจเสี่ยงต่อการถูกอ่านข้อมูลจาก Database, Bypass Login หรือแก้ไขข้อมูล",
+    fix: "ใช้ Prepared Statement, ตรวจสอบ Input, Review Code ของ Endpoint ที่เกี่ยวข้อง, เพิ่ม WAF Rule และตรวจสอบ Database Log ว่ามี Query สำเร็จหรือไม่",
     tactic: "Initial Access",
     technique: "T1190 Exploit Public-Facing Application",
     confidence: 93,
   },
   {
-    name: "Path traversal attempt",
+    name: "Path Traversal",
     severity: "High",
     logTypes: ["Apache/Nginx", "Application", "Generic"],
     patterns: [
@@ -312,28 +310,28 @@ const rules: Rule[] = [
       /windows\/system32/i,
     ],
     keywords: ["../", "..\\", "/etc/passwd", "win.ini"],
-    rootCause: "A request attempted to access files outside the intended web directory.",
-    impact: "Attackers may read sensitive files, configuration secrets, or system files.",
-    fix: "Normalize paths, block traversal patterns at WAF, enforce allowlisted file paths, and review file download endpoints.",
+    rootCause: "พบ Request ที่พยายามเข้าถึงไฟล์นอก Directory ที่เว็บอนุญาต",
+    impact: "ผู้โจมตีอาจอ่านไฟล์สำคัญ เช่น Config, Secret หรือไฟล์ระบบ",
+    fix: "Normalize Path, Block Pattern ที่ WAF, ใช้ Allowlist สำหรับ Path และตรวจสอบ Endpoint ดาวน์โหลดไฟล์",
     tactic: "Initial Access",
     technique: "T1190 Exploit Public-Facing Application",
     confidence: 90,
   },
   {
-    name: "XSS payload",
+    name: "XSS Payload",
     severity: "Medium",
     logTypes: ["Apache/Nginx", "Application", "Generic"],
     patterns: [/<script/i, /javascript:/i, /onerror\s*=/i, /onload\s*=/i, /document\.cookie/i],
     keywords: ["<script", "javascript:", "onerror=", "document.cookie"],
-    rootCause: "A request contained a cross-site scripting payload.",
-    impact: "Users may be exposed to session theft, malicious redirects, or browser-side execution.",
-    fix: "Escape output, apply Content Security Policy, validate input, and review affected parameters.",
+    rootCause: "พบ Request ที่มี Payload สำหรับ Cross-site Scripting",
+    impact: "ผู้ใช้อาจเสี่ยงถูกขโมย Session, Redirect ไปเว็บอันตราย หรือรัน Script ฝั่ง Browser",
+    fix: "Escape Output, ใช้ Content Security Policy, Validate Input และตรวจสอบ Parameter ที่เกี่ยวข้อง",
     tactic: "Initial Access",
     technique: "T1189 Drive-by Compromise",
     confidence: 82,
   },
   {
-    name: "Command injection pattern",
+    name: "Command Injection",
     severity: "Critical",
     logTypes: ["Apache/Nginx", "Application", "Generic", "Linux Syslog"],
     patterns: [
@@ -345,15 +343,15 @@ const rules: Rule[] = [
       /powershell/i,
     ],
     keywords: [";cat", "|bash", "wget", "curl", "cmd.exe", "powershell"],
-    rootCause: "A request or process contained shell metacharacters and command execution indicators.",
-    impact: "Attackers may execute commands on the server and gain remote code execution.",
-    fix: "Remove shell execution, use safe APIs, validate input, block payloads at WAF, and check host telemetry for spawned processes.",
+    rootCause: "พบ Request หรือ Process ที่มีตัวบ่งชี้การสั่งรันคำสั่งระบบ",
+    impact: "ผู้โจมตีอาจรันคำสั่งบน Server และยกระดับเป็น Remote Code Execution",
+    fix: "หลีกเลี่ยงการเรียก Shell, ใช้ API ที่ปลอดภัย, Validate Input, Block Payload ที่ WAF และตรวจสอบ Process ที่ถูก Spawn บนเครื่อง",
     tactic: "Execution",
     technique: "T1059 Command and Scripting Interpreter",
     confidence: 90,
   },
   {
-    name: "Firewall drop or deny",
+    name: "Firewall: Drop/Deny Traffic",
     severity: "Medium",
     logTypes: ["Firewall", "Cisco IOS", "Network Device", "Meraki"],
     patterns: [
@@ -363,15 +361,15 @@ const rules: Rule[] = [
       /\bDeny\s+udp\b/i,
     ],
     keywords: ["drop", "deny", "blocked", "reject"],
-    rootCause: "Traffic was blocked by a firewall or network security rule.",
-    impact: "May indicate scanning, denied application traffic, or a policy misconfiguration.",
-    fix: "Review source/destination, port, policy ID, NAT, recent changes, and whether this is expected traffic.",
+    rootCause: "พบ Traffic ถูก Firewall หรือ Security Policy ปฏิเสธ",
+    impact: "อาจเป็นการสแกนระบบ, Traffic ของแอปที่ถูกปฏิเสธ หรือ Policy ตั้งค่าผิด",
+    fix: "ตรวจสอบ Source/Destination, Port, Policy ID, NAT, Change ล่าสุด และยืนยันว่า Traffic นี้ควรถูก Block หรือไม่",
     tactic: "Reconnaissance",
     technique: "T1595 Active Scanning",
     confidence: 74,
   },
   {
-    name: "Port scan or blocked probe",
+    name: "Port Scan / Probe",
     severity: "High",
     logTypes: ["Firewall", "Cisco IOS", "Network Device", "Meraki"],
     patterns: [
@@ -382,15 +380,15 @@ const rules: Rule[] = [
       /\bscanning\b/i,
     ],
     keywords: ["DPT=", "SYN", "port scan", "scanning"],
-    rootCause: "A source appears to probe one or more destination services.",
-    impact: "Could be reconnaissance before exploitation or unauthorized vulnerability scanning.",
-    fix: "Rate-limit or block the source, verify exposed services, and search for follow-on exploit attempts.",
+    rootCause: "พบ Source พยายาม Probe หรือสแกน Service ปลายทาง",
+    impact: "อาจเป็นขั้นตอน Recon ก่อนโจมตีจริง หรือเป็นการสแกนช่องโหว่โดยไม่ได้รับอนุญาต",
+    fix: "Rate-limit หรือ Block Source, ตรวจสอบ Service ที่เปิดเผย และค้นหาเหตุการณ์โจมตีต่อเนื่องจาก IP เดียวกัน",
     tactic: "Reconnaissance",
     technique: "T1595 Active Scanning",
     confidence: 78,
   },
   {
-    name: "Windows suspicious PowerShell",
+    name: "Windows: PowerShell น่าสงสัย",
     severity: "High",
     logTypes: ["Windows Event", "Application", "Generic"],
     patterns: [
@@ -404,41 +402,41 @@ const rules: Rule[] = [
       /bypass\s+-?executionpolicy/i,
     ],
     keywords: ["powershell", "encodedcommand", "downloadstring", "iex", "bypass"],
-    rootCause: "PowerShell activity contains suspicious execution or obfuscation indicators.",
-    impact: "May indicate malware execution, script-based intrusion, or lateral movement.",
-    fix: "Collect command line, parent process, user, script block logs, endpoint alerts, and isolate the host if malicious.",
+    rootCause: "พบกิจกรรม PowerShell ที่มีรูปแบบน่าสงสัยหรือมีการ Obfuscation",
+    impact: "อาจเป็นการรัน Malware, Script-based Intrusion หรือ Lateral Movement",
+    fix: "เก็บ Command Line, Parent Process, User, Script Block Log, Endpoint Alert และแยกเครื่องออกจากเครือข่ายถ้ายืนยันว่าเป็นอันตราย",
     tactic: "Execution",
     technique: "T1059.001 PowerShell",
     confidence: 88,
   },
   {
-    name: "Linux privilege or sudo failure",
+    name: "Linux: พยายามใช้สิทธิ์สูงไม่สำเร็จ",
     severity: "Medium",
     logTypes: ["Linux Syslog", "Generic"],
     patterns: [/sudo:.*authentication failure/i, /sudo:.*incorrect password/i, /user NOT in sudoers/i, /su:.*failure/i],
     keywords: ["sudo", "authentication failure", "NOT in sudoers", "su:"],
-    rootCause: "A Linux user attempted privileged access and failed.",
-    impact: "Could be user error or an attacker attempting privilege escalation.",
-    fix: "Validate the user, source session, sudo policy, and nearby successful privileged commands.",
+    rootCause: "พบผู้ใช้ Linux พยายามใช้สิทธิ์สูงแต่ไม่สำเร็จ",
+    impact: "อาจเป็นผู้ใช้กรอกรหัสผิด หรือผู้โจมตีพยายามยกระดับสิทธิ์",
+    fix: "ตรวจสอบผู้ใช้, Session ต้นทาง, Sudo Policy และคำสั่งสิทธิ์สูงที่สำเร็จในช่วงเวลาใกล้เคียง",
     tactic: "Privilege Escalation",
     technique: "T1548 Abuse Elevation Control Mechanism",
     confidence: 76,
   },
   {
-    name: "Service down or timeout",
+    name: "Service Down / Timeout",
     severity: "Medium",
     logTypes: ["Application", "Linux Syslog", "Generic", "Network Device", "Cisco IOS"],
     patterns: [/service.*down/i, /timeout/i, /timed out/i, /connection refused/i, /unreachable/i, /health check failed/i],
     keywords: ["down", "timeout", "connection refused", "unreachable", "health check failed"],
-    rootCause: "A service, host, or dependency reported availability problems.",
-    impact: "Users may experience application slowness, failed connections, or outage symptoms.",
-    fix: "Check recent changes, CPU/memory/interface utilization, dependency health, routing, DNS, and application error rate.",
+    rootCause: "พบ Service, Host หรือ Dependency มีปัญหาด้าน Availability",
+    impact: "ผู้ใช้อาจเจอระบบช้า, เชื่อมต่อไม่ได้ หรือมีอาการระบบล่ม",
+    fix: "ตรวจสอบ Change ล่าสุด, CPU/Memory/Interface Utilization, Dependency, Routing, DNS และ Error Rate ของแอป",
     tactic: "Impact",
     technique: "Service Disruption",
     confidence: 70,
   },
   {
-    name: "Cisco MAC flapping",
+    name: "Cisco: MAC Flapping",
     severity: "High",
     logTypes: ["Cisco IOS", "Network Device"],
     patterns: [
@@ -448,15 +446,15 @@ const rules: Rule[] = [
       /moved\s+from\s+.*\s+to\s+/i,
     ],
     keywords: ["MACFLAP", "flapping", "moved from", "host"],
-    rootCause: "The same MAC address is moving between switch ports.",
-    impact: "May indicate a Layer 2 loop, unmanaged switch loop, wrong cabling, AP bridge loop, or STP instability.",
-    fix: "Trace the MAC address, check both ports, inspect cabling, verify STP root/blocked ports, and remove unmanaged switch loops.",
+    rootCause: "พบ MAC Address เดียวกันย้ายไปมาระหว่าง Port บน Switch",
+    impact: "อาจเกิดจาก Layer 2 Loop, Unmanaged Switch วนลูป, เสียบสายผิด, AP Bridge Loop หรือ STP ไม่เสถียร",
+    fix: "ไล่ MAC Address, ตรวจสอบ Port ทั้งสองฝั่ง, ตรวจสาย, ตรวจ STP Root/Blocked Port และตัด Loop จาก Unmanaged Switch",
     tactic: "Impact",
     technique: "Layer 2 Loop / MAC Instability",
     confidence: 92,
   },
   {
-    name: "Cisco DHCP Snooping or DAI violation",
+    name: "Cisco: DHCP Snooping / DAI Violation",
     severity: "High",
     logTypes: ["Cisco IOS", "Network Device"],
     patterns: [
@@ -467,15 +465,15 @@ const rules: Rule[] = [
       /snooping.*(deny|drop|untrusted)/i,
     ],
     keywords: ["DHCP_SNOOPING", "SW_DAI", "DAI", "ARP inspection", "untrusted"],
-    rootCause: "The switch detected DHCP Snooping or Dynamic ARP Inspection activity.",
-    impact: "Possible rogue DHCP, ARP spoofing, wrong trusted uplink, missing binding, or endpoint misconfiguration.",
-    fix: "Check trusted uplinks, DHCP Snooping binding table, VLAN configuration, ARP inspection logs, and recent switch changes.",
+    rootCause: "Switch ตรวจพบเหตุการณ์ DHCP Snooping หรือ Dynamic ARP Inspection",
+    impact: "อาจเกิดจาก Rogue DHCP, ARP Spoofing, ตั้ง Trusted Uplink ผิด, Binding หาย หรือ Endpoint ตั้งค่าผิด",
+    fix: "ตรวจสอบ Trusted Uplink, DHCP Snooping Binding Table, VLAN, ARP Inspection Log และ Change ล่าสุดบน Switch",
     tactic: "Credential Access",
     technique: "T1557 Adversary-in-the-Middle",
     confidence: 88,
   },
   {
-    name: "Cisco STP topology change",
+    name: "Cisco: STP Topology Change",
     severity: "High",
     logTypes: ["Cisco IOS", "Network Device"],
     patterns: [
@@ -487,15 +485,15 @@ const rules: Rule[] = [
       /loop guard/i,
     ],
     keywords: ["SPANTREE", "topology change", "BPDU", "root guard", "loop guard"],
-    rootCause: "Spanning Tree detected a topology change, BPDU event, or port state transition.",
-    impact: "Network may experience temporary packet loss, loop prevention events, blocked ports, or unstable Layer 2 paths.",
-    fix: "Check root bridge, PortFast, BPDU Guard, Loop Guard, uplink topology, and the port that changed state.",
+    rootCause: "Spanning Tree ตรวจพบ Topology Change, BPDU Event หรือ Port State เปลี่ยน",
+    impact: "Network อาจมี Packet Loss ชั่วคราว, Port ถูก Block หรือเส้นทาง Layer 2 ไม่เสถียร",
+    fix: "ตรวจสอบ Root Bridge, PortFast, BPDU Guard, Loop Guard, Uplink Topology และ Port ที่เปลี่ยนสถานะ",
     tactic: "Impact",
     technique: "Layer 2 Topology Change",
     confidence: 84,
   },
   {
-    name: "Cisco interface down",
+    name: "Cisco: Interface Down",
     severity: "Medium",
     logTypes: ["Cisco IOS", "Network Device"],
     patterns: [
@@ -506,15 +504,15 @@ const rules: Rule[] = [
       /err-?disabled/i,
     ],
     keywords: ["LINK", "LINEPROTO", "changed state to down", "err-disabled"],
-    rootCause: "A network interface changed state or was disabled.",
-    impact: "Connected users, APs, uplinks, downstream switches, or servers may lose connectivity.",
-    fix: "Check cable, SFP, port errors, remote device power, interface counters, err-disable reason, and recent maintenance.",
+    rootCause: "พบ Interface เปลี่ยนสถานะหรือถูก Disable",
+    impact: "ผู้ใช้, AP, Uplink, Switch ปลายทาง หรือ Server ที่เชื่อมต่อกับ Port นี้อาจหลุดจากระบบ",
+    fix: "ตรวจสอบสาย, SFP, Port Error, ไฟเลี้ยงอุปกรณ์ปลายทาง, Interface Counter, สาเหตุ Err-disable และ Maintenance ล่าสุด",
     tactic: "Impact",
     technique: "Network Service Disruption",
     confidence: 78,
   },
   {
-    name: "Cisco port security violation",
+    name: "Cisco: Port Security Violation",
     severity: "High",
     logTypes: ["Cisco IOS", "Network Device"],
     patterns: [
@@ -524,15 +522,15 @@ const rules: Rule[] = [
       /violation.*(shutdown|restrict|protect)/i,
     ],
     keywords: ["PORT_SECURITY", "PSECURE", "security violation"],
-    rootCause: "Port security detected an unauthorized MAC address or violation.",
-    impact: "The switch port may be restricted or shut down, causing user/device outage or indicating unauthorized device connection.",
-    fix: "Verify the connected device, learned MAC address, port-security settings, violation mode, and clear err-disable only after confirming legitimacy.",
+    rootCause: "Port Security ตรวจพบ MAC Address ที่ไม่ได้รับอนุญาตหรือเกิด Violation",
+    impact: "Port อาจถูก Restrict หรือ Shutdown ทำให้อุปกรณ์ใช้งานไม่ได้ หรืออาจมีอุปกรณ์ไม่ได้รับอนุญาตมาต่อเข้าระบบ",
+    fix: "ตรวจสอบอุปกรณ์ที่ต่ออยู่, MAC Address ที่เรียนรู้, ค่า Port-Security, Violation Mode และ Clear Err-disable หลังยืนยันว่าอุปกรณ์ถูกต้องเท่านั้น",
     tactic: "Defense Evasion",
     technique: "Network Access Control Bypass",
     confidence: 86,
   },
   {
-    name: "Routing adjacency down",
+    name: "Routing: Adjacency Down",
     severity: "High",
     logTypes: ["Cisco IOS", "Network Device"],
     patterns: [
@@ -542,9 +540,9 @@ const rules: Rule[] = [
       /HSRP.*state.*(Speak|Standby|Active)/i,
     ],
     keywords: ["OSPF", "BGP", "EIGRP", "HSRP", "neighbor down"],
-    rootCause: "A routing or gateway redundancy adjacency changed state.",
-    impact: "Traffic may reroute, fail over, flap, or lose reachability depending on topology.",
-    fix: "Check physical link, peer reachability, timers, authentication, routing policy, CPU, interface errors, and recent changes.",
+    rootCause: "พบ Routing Neighbor หรือ Gateway Redundancy เปลี่ยนสถานะ",
+    impact: "Traffic อาจเปลี่ยนเส้นทาง, Failover, Flap หรือขาดการเชื่อมต่อ ขึ้นอยู่กับ Topology",
+    fix: "ตรวจสอบ Physical Link, Peer Reachability, Timer, Authentication, Routing Policy, CPU, Interface Error และ Change ล่าสุด",
     tactic: "Impact",
     technique: "Network Route Disruption",
     confidence: 82,
@@ -595,8 +593,8 @@ export function analyzeLog(logContent: string): AnalysisResult {
         logType,
         rule: rule.name,
         detectedKeywords: uniqueSorted([...matchedKeywords, matchedPattern ? matchedPattern.source.slice(0, 40) : ""]),
-        possibleRootCause: ioc ? `${rule.rootCause} IOC matched: ${ioc.type}.` : rule.rootCause,
-        impact: ioc ? `${rule.impact} IOC context: ${ioc.description}` : rule.impact,
+        possibleRootCause: ioc ? `${rule.rootCause} พบ IOC ตรงกับรายการ: ${ioc.type}.` : rule.rootCause,
+        impact: ioc ? `${rule.impact} ข้อมูล IOC: ${ioc.description}` : rule.impact,
         recommendedFix: rule.fix,
         sourceIp: parsed.sourceIp,
         destinationIp: parsed.destinationIp,
@@ -643,8 +641,8 @@ function analyzeWindowsEventId(line: string, lineNumber: number, logType: LogTyp
     logType: logType === "Generic" ? "Windows Event" : logType,
     rule: mapped.rule,
     detectedKeywords: [`Event ID ${eventId}`],
-    possibleRootCause: ioc ? `${mapped.rootCause} IOC matched: ${ioc.type}.` : mapped.rootCause,
-    impact: ioc ? `${mapped.impact} IOC context: ${ioc.description}` : mapped.impact,
+    possibleRootCause: ioc ? `${mapped.rootCause} พบ IOC ตรงกับรายการ: ${ioc.type}.` : mapped.rootCause,
+    impact: ioc ? `${mapped.impact} ข้อมูล IOC: ${ioc.description}` : mapped.impact,
     recommendedFix: mapped.fix,
     sourceIp: parsed.sourceIp,
     destinationIp: parsed.destinationIp,
@@ -865,7 +863,7 @@ function applyAggregateSeverity(findings: Finding[]): Finding[] {
       repeatedCount: Math.max(finding.repeatedCount, count),
       impact:
         count >= 5 && !finding.impact.includes("Repeated activity")
-          ? `${finding.impact} Repeated activity raises the incident priority.`
+          ? `${finding.impact} เหตุการณ์เกิดซ้ำหลายครั้ง ทำให้ความสำคัญของ Incident สูงขึ้น`
           : finding.impact,
     };
   });
@@ -881,57 +879,57 @@ function correlateFindings(findings: Finding[]): Correlation[] {
 
     if (bruteForce.length >= 4 || uniqueUsers.size >= 3) {
       correlations.push({
-        title: "Credential attack burst",
+        title: "พบพฤติกรรมโจมตี Credential แบบถี่ผิดปกติ",
         severity: "Critical",
         sourceIp,
         eventCount: bruteForce.length,
-        description: `${sourceIp} generated ${bruteForce.length} authentication failure signal(s) across ${uniqueUsers.size || 1} account(s).`,
-        recommendedAction: "Block or rate-limit the source, review successful logons from the same IP, and force reset for targeted accounts if compromise is suspected.",
+        description: `${sourceIp} สร้าง ${bruteForce.length} เหตุการณ์ยืนยันตัวตนล้มเหลว ครอบคลุม ${uniqueUsers.size || 1} บัญชี`,
+        recommendedAction: "Block หรือ Rate-limit Source, ตรวจสอบ Login สำเร็จจาก IP เดียวกัน และบังคับ Reset รหัสผ่านบัญชีเป้าหมายหากสงสัยว่าถูกยึดบัญชี",
       });
     }
 
     const ports = new Set(items.map((finding) => finding.destinationPort).filter(Boolean));
-    const scanEvents = items.filter((finding) => finding.rule === "Port scan or blocked probe" || finding.rule === "Firewall drop or deny");
+    const scanEvents = items.filter((finding) => finding.rule === "Port Scan / Probe" || finding.rule === "Firewall: Drop/Deny Traffic");
 
     if (scanEvents.length >= 3 || ports.size >= 4) {
       correlations.push({
-        title: "Multi-port reconnaissance",
+        title: "พบพฤติกรรม Recon / สแกนหลายพอร์ต",
         severity: "High",
         sourceIp,
         eventCount: scanEvents.length || items.length,
-        description: `${sourceIp} touched ${ports.size} destination port(s), suggesting service discovery or scanning.`,
-        recommendedAction: "Confirm exposed services, add rate limits, and search for follow-on exploit attempts from the same source.",
+        description: `${sourceIp} เข้าถึง ${ports.size} พอร์ตปลายทาง บ่งชี้การค้นหา Service หรือการสแกน`,
+        recommendedAction: "ยืนยัน Service ที่เปิดอยู่, เพิ่ม Rate Limit และค้นหาเหตุการณ์โจมตีต่อเนื่องจาก Source เดียวกัน",
       });
     }
 
     const webAttackRules = new Set(
       items
         .filter((finding) =>
-          ["SQL injection pattern", "Path traversal attempt", "XSS payload", "Command injection pattern"].includes(finding.rule)
+          ["SQL Injection", "Path Traversal", "XSS Payload", "Command Injection"].includes(finding.rule)
         )
         .map((finding) => finding.rule)
     );
 
     if (webAttackRules.size >= 2) {
       correlations.push({
-        title: "Web exploitation chain",
+        title: "พบลำดับการโจมตีเว็บหลายรูปแบบ",
         severity: "Critical",
         sourceIp,
         eventCount: items.length,
-        description: `${sourceIp} attempted multiple web attack classes: ${Array.from(webAttackRules).join(", ")}.`,
-        recommendedAction: "Prioritize WAF blocking, endpoint patch review, and application logs for successful 2xx/5xx responses.",
+        description: `${sourceIp} พยายามโจมตีเว็บหลายประเภท: ${Array.from(webAttackRules).join(", ")}.`,
+        recommendedAction: "ให้ความสำคัญกับการ Block ที่ WAF, ตรวจ Patch ของ Endpoint และดู Application Log ว่ามี Response 2xx/5xx ที่บ่งชี้ว่าสำเร็จหรือไม่",
       });
     }
 
     const iocHits = items.filter((finding) => finding.sourceIp && iocList[finding.sourceIp]);
     if (iocHits.length >= 1) {
       correlations.push({
-        title: "IOC source activity",
+        title: "พบกิจกรรมจาก Source ที่อยู่ใน IOC",
         severity: "High",
         sourceIp,
         eventCount: iocHits.length,
-        description: `${sourceIp} matched local IOC context and generated ${iocHits.length} suspicious event(s).`,
-        recommendedAction: "Block the IOC if business impact is acceptable, hunt for the same IP across firewall/proxy/auth logs, and document the IOC in the incident ticket.",
+        description: `${sourceIp} ตรงกับ IOC ภายในระบบ และสร้าง ${iocHits.length} เหตุการณ์น่าสงสัย`,
+        recommendedAction: "Block IOC ถ้าไม่กระทบงาน, Hunt หา IP เดียวกันใน Firewall/Proxy/Auth Log และบันทึก IOC ลง Incident Ticket",
       });
     }
   });
@@ -939,30 +937,30 @@ function correlateFindings(findings: Finding[]): Correlation[] {
   const byAsset = groupBy(findings.filter((finding) => finding.asset), (finding) => finding.asset || "unknown");
   byAsset.forEach((items, asset) => {
     const layer2 = items.filter((finding) =>
-      ["Cisco MAC flapping", "Cisco STP topology change", "Cisco DHCP Snooping or DAI violation", "Cisco interface down"].includes(finding.rule)
+      ["Cisco: MAC Flapping", "Cisco: STP Topology Change", "Cisco: DHCP Snooping / DAI Violation", "Cisco: Interface Down"].includes(finding.rule)
     );
 
     if (layer2.length >= 3) {
       correlations.push({
-        title: "Layer 2 instability cluster",
+        title: "พบกลุ่มเหตุการณ์ Layer 2 ไม่เสถียร",
         severity: "High",
         sourceIp: null,
         eventCount: layer2.length,
-        description: `${asset} generated ${layer2.length} Layer 2 or interface stability signal(s).`,
-        recommendedAction: "Check STP state, recent cabling changes, unmanaged switches, uplinks, AP bridge links, and interface counters.",
+        description: `${asset} สร้าง ${layer2.length} สัญญาณปัญหา Layer 2 หรือ Interface`,
+        recommendedAction: "ตรวจสอบ STP State, การเปลี่ยนสายล่าสุด, Unmanaged Switch, Uplink, AP Bridge Link และ Interface Counter",
       });
     }
   });
 
-  const serviceIssues = findings.filter((finding) => finding.rule === "Service down or timeout");
+  const serviceIssues = findings.filter((finding) => finding.rule === "Service Down / Timeout");
   if (serviceIssues.length >= 5) {
     correlations.push({
-      title: "Availability degradation spike",
+      title: "พบสัญญาณ Availability แย่ลงผิดปกติ",
       severity: "High",
       sourceIp: null,
       eventCount: serviceIssues.length,
-      description: `${serviceIssues.length} service availability signals were detected in the submitted log window.`,
-      recommendedAction: "Check recent deployments, upstream health, saturation metrics, DNS, routing, and error-rate dashboards.",
+      description: `${serviceIssues.length} เหตุการณ์ที่เกี่ยวข้องกับ Availability ใน Log ช่วงนี้`,
+      recommendedAction: "ตรวจสอบ Deployment ล่าสุด, Upstream Health, Saturation Metrics, DNS, Routing และ Dashboard Error Rate",
     });
   }
 
@@ -1073,13 +1071,13 @@ function buildNarrative(
   topSourceIp: string | null
 ): string {
   if (findings.length === 0) {
-    return "No suspicious patterns were detected in the submitted log window.";
+    return "ไม่พบรูปแบบที่น่าสงสัยใน Log ที่ส่งเข้ามาวิเคราะห์";
   }
 
   const leading = correlations[0]?.title || findings[0].rule;
-  const source = topSourceIp ? ` Top source: ${topSourceIp}.` : "";
+  const source = topSourceIp ? ` แหล่งที่พบมากที่สุด: ${topSourceIp}.` : "";
   const techniques = uniqueSorted(findings.map((finding) => finding.technique)).slice(0, 3).join(", ");
-  return `Risk score ${riskScore}/100. Primary concern: ${leading}.${source} Observed techniques: ${techniques}.`;
+  return `คะแนนความเสี่ยง ${riskScore}/100 ประเด็นหลักที่ควรสนใจ: ${leading}.${source} เทคนิคที่พบ: ${techniques}.`;
 }
 
 function buildRecommendedActions(findings: Finding[], correlations: Correlation[]): string[] {
@@ -1091,11 +1089,11 @@ function buildRecommendedActions(findings: Finding[], correlations: Correlation[
   ];
 
   if (findings.some((finding) => finding.sourceIp)) {
-    actions.push("Pivot on top source IPs across firewall, proxy, authentication, endpoint, and DNS telemetry.");
+    actions.push("นำ Top Source IP ไปค้นต่อใน Firewall, Proxy, Authentication, Endpoint และ DNS Log");
   }
 
   if (findings.some((finding) => finding.logType === "Cisco IOS" || finding.logType === "Network Device")) {
-    actions.push("For network-device incidents, collect show log, show interface status, show spanning-tree, show mac address-table, and recent change records.");
+    actions.push("สำหรับ Incident ฝั่ง Network Device ให้เก็บ show log, show interface status, show spanning-tree, show mac address-table และบันทึก Change ล่าสุด");
   }
 
   return uniqueSorted(actions).slice(0, 8);
@@ -1113,8 +1111,3 @@ function groupBy<T>(items: T[], getKey: (item: T) => string): Map<string, T[]> {
 function uniqueSorted(values: string[]): string[] {
   return Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
 }
-'''
-
-path = Path("/mnt/data/logAnalyzer.ts")
-path.write_text(content, encoding="utf-8")
-print(f"Created {path} ({len(content)} characters)")
