@@ -1116,7 +1116,11 @@ function extractMac(line: string): string | null {
 }
 
 function extractWindowsEventId(line: string): string | null {
-  const match = line.match(/\bEvent\s*ID[:\s]+(\d{4})\b/i) || line.match(/\bEventCode[=:\s]+(\d{4})\b/i) || line.match(/\bID[:\s]+(\d{4})\b/i);
+  const match =
+    line.match(/\bEvent\s*ID[:\s]+(\d{4})\b/i) ||
+    line.match(/\bEventCode[=:\s]+(\d{4})\b/i) ||
+    line.match(/\bID[:\s]+(\d{4})\b/i) ||
+    line.match(/\bAudit\s+(?:Success|Failure)\s*,\s*(\d{4})\b/i);
   return match ? match[1] : null;
 }
 
@@ -1586,7 +1590,8 @@ function isAuthFailureFinding(finding: Finding): boolean {
     finding.rule.includes("เข้าสู่ระบบไม่สำเร็จ") ||
     finding.rule.toLowerCase().includes("brute force") ||
     finding.raw.toLowerCase().includes("failed password") ||
-    finding.raw.toLowerCase().includes("event id 4625")
+    finding.raw.toLowerCase().includes("event id 4625") ||
+    (finding.logType === "Windows Event" && /\b4625\b/.test(finding.raw))
   );
 }
 

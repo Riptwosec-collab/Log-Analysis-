@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc --noEmit -p tsconfig.lint.json",
+    "typecheck": "tsc --noEmit -p tsconfig.lint.json",
     "test": "jest"
   },
   "dependencies": {
