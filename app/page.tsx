@@ -30,6 +30,15 @@ const THEME_META: Record<Theme, { icon: string; label: string; color: string }> 
   matrix:    { icon: "💻", label: "Matrix",    color: "#00ff41" },
 };
 
+const DISPLAY_THEME_META: Record<Theme, { code: string; label: string; color: string }> = {
+  dark: { code: "01", label: "Graphite", color: "#2dd4bf" },
+  light: { code: "02", label: "Daylight", color: "#0f766e" },
+  cyberpunk: { code: "03", label: "Signal", color: "#fb7185" },
+  ocean: { code: "04", label: "Harbor", color: "#38bdf8" },
+  inferno: { code: "05", label: "Ember", color: "#fb923c" },
+  matrix: { code: "06", label: "Terminal", color: "#86efac" },
+};
+
 type HistoryEntry = {
   id: string;
   label: string;
@@ -326,8 +335,8 @@ export default function SOCDashboard() {
                 <button onClick={() => setShowThemePicker((s) => !s)}
                   className="rounded-md border border-zinc-700 bg-black px-3 py-1 text-sm hover:border-cyan-500 flex items-center gap-1.5"
                   title="Change theme">
-                  <span>{THEME_META[theme].icon}</span>
-                  <span className="text-zinc-300">{THEME_META[theme].label}</span>
+                  <span className="font-mono text-xs">{DISPLAY_THEME_META[theme].code}</span>
+                  <span className="text-zinc-300">{DISPLAY_THEME_META[theme].label}</span>
                   <span className="text-zinc-600">▾</span>
                 </button>
                 {showThemePicker && (
@@ -336,19 +345,22 @@ export default function SOCDashboard() {
                     {THEMES.map((t) => (
                       <button key={t} onClick={() => { setTheme(t); setShowThemePicker(false); }}
                         className={`rounded-md px-3 py-2 text-xs font-medium flex items-center gap-2 transition-colors ${theme === t ? "bg-cyan-500 text-zinc-950" : "hover:bg-zinc-800 text-zinc-300"}`}>
-                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: THEME_META[t].color }} />
-                        {THEME_META[t].icon} {THEME_META[t].label}
+                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: DISPLAY_THEME_META[t].color }} />
+                        <span className="font-mono text-[10px]">{DISPLAY_THEME_META[t].code}</span>
+                        {DISPLAY_THEME_META[t].label}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
               <button onClick={() => setShowHistory((s) => !s)}
-                className={`rounded-md border px-3 py-1 text-sm ${showHistory ? "border-cyan-500 bg-cyan-500/10 text-cyan-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-cyan-500"}`}>
+                className={`rounded-md border px-3 py-1 text-[0px] ${showHistory ? "border-cyan-500 bg-cyan-500/10 text-cyan-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-cyan-500"}`}>
+                <span className="text-sm">History ({history.length})</span>
                 📋 History ({history.length})
               </button>
               <button onClick={() => setShowTools((s) => !s)}
-                className={`rounded-md border px-3 py-1 text-sm ${showTools ? "border-violet-500 bg-violet-500/10 text-violet-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-violet-500"}`}>
+                className={`rounded-md border px-3 py-1 text-[0px] ${showTools ? "border-violet-500 bg-violet-500/10 text-violet-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-violet-500"}`}>
+                <span className="text-sm">Tools ({rules.filter((r) => r.enabled).length} rules / {iocs.length} IOCs)</span>
                 ⚙️ Tools ({rules.filter((r) => r.enabled).length} rules · {iocs.length} IOCs)
               </button>
             </div>
@@ -405,7 +417,8 @@ export default function SOCDashboard() {
             <div className="flex flex-wrap gap-2 mb-4">
               {(["rules", "ioc", "webhook", "audit"] as const).map((tab) => (
                 <button key={tab} onClick={() => setToolsTab(tab)}
-                  className={`rounded-md px-4 py-2 text-sm font-medium ${toolsTab === tab ? "bg-violet-600 text-white" : "border border-zinc-700 text-zinc-300 hover:border-violet-500"}`}>
+                  className={`rounded-md px-4 py-2 text-[0px] font-medium ${toolsTab === tab ? "bg-violet-600 text-white" : "border border-zinc-700 text-zinc-300 hover:border-violet-500"}`}>
+                  <span className="text-sm">{tab === "rules" ? "Custom Rules" : tab === "ioc" ? "IOC Watchlist" : tab === "webhook" ? "Alerts" : "Audit Log"}</span>
                   {tab === "rules" ? "📋 Custom Rules" : tab === "ioc" ? "🎯 IOC Watchlist" : tab === "webhook" ? "🔔 Alerts" : "📊 Audit Log"}
                 </button>
               ))}
@@ -437,7 +450,8 @@ export default function SOCDashboard() {
             {fileLabels.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {fileLabels.map((name) => (
-                  <span key={name} className="flex items-center gap-1 rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-300">
+                  <span key={name} className="flex items-center gap-1 rounded-full bg-zinc-800 px-3 py-1 text-[0px] text-zinc-300">
+                    <span className="text-xs">{name}</span>
                     📄 {name}
                     <button onClick={() => setFileLabels((f) => f.filter((l) => l !== name))} className="text-zinc-500 hover:text-red-400 ml-1">×</button>
                   </span>
@@ -560,7 +574,8 @@ export default function SOCDashboard() {
               <div className="flex gap-2 mb-4">
                 {(["geo", "mitre"] as const).map((tab) => (
                   <button key={tab} onClick={() => setVizTab(tab)}
-                    className={`rounded-md px-4 py-2 text-sm font-medium ${vizTab === tab ? "bg-cyan-500 text-zinc-950" : "border border-zinc-700 text-zinc-300 hover:border-cyan-500"}`}>
+                    className={`rounded-md px-4 py-2 text-[0px] font-medium ${vizTab === tab ? "bg-cyan-500 text-zinc-950" : "border border-zinc-700 text-zinc-300 hover:border-cyan-500"}`}>
+                    <span className="text-sm">{tab === "geo" ? "Geo Map" : "MITRE ATT&CK"}</span>
                     {tab === "geo" ? "🌍 Geo Map" : "🛡️ MITRE ATT&CK"}
                   </button>
                 ))}

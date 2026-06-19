@@ -26,8 +26,9 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <div className="w-full max-w-sm rounded-lg border border-zinc-800 bg-zinc-900 p-8">
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="card-3d w-full max-w-sm rounded-lg border border-zinc-800 bg-zinc-900 p-8">
+        <p className="mb-2 text-xs font-semibold uppercase text-cyan-300">Log Analysis</p>
         <h1 className="text-2xl font-semibold text-white mb-2">SOC Dashboard</h1>
         <p className="text-sm text-zinc-400 mb-6">Sign in to continue</p>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -56,12 +57,18 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-cyan-500 py-2 text-sm font-semibold text-zinc-950 hover:bg-cyan-400 disabled:opacity-60"
+            className="btn-3d w-full rounded-md bg-cyan-500 py-2 text-sm font-semibold text-zinc-950 hover:bg-cyan-400 disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-        <p className="mt-6 text-xs text-zinc-600">
+        <p className="mt-6 text-[0px] text-zinc-600">
+          <span className="text-xs leading-5 text-zinc-500">
+            Default account: <span className="font-mono text-zinc-300">admin</span> /
+            <span className="font-mono text-zinc-300"> soc2024</span>. Set
+            <span className="font-mono text-zinc-300"> ADMIN_USERNAME</span> and
+            <span className="font-mono text-zinc-300"> ADMIN_PASSWORD</span> to change it.
+          </span>
           Default: admin / soc2024 · Set ADMIN_USERNAME and ADMIN_PASSWORD env vars to
           change
         </p>
