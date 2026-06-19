@@ -7,7 +7,6 @@ import type { Language } from "@/lib/i18n";
 import { UI, localize, severityLabel, severityClass, barClass } from "@/lib/i18n";
 import SummaryCards from "./components/SummaryCards";
 import CorrelationPanel from "./components/CorrelationPanel";
-import FindingsTable from "./components/FindingsTable";
 import ExportMenu from "./components/ExportMenu";
 import TimelineChart from "./components/TimelineChart";
 import WorldMap from "./components/WorldMap";
@@ -16,6 +15,23 @@ import CustomRulesEditor, { useCustomRules, serializeCustomRules } from "./compo
 import IocManager, { useCustomIocs } from "./components/IocManager";
 import WebhookSettings, { getWebhookConfig } from "./components/WebhookSettings";
 import AuditLog from "./components/AuditLog";
+import {
+  AdvancedFilterBar,
+  AlertTimeline,
+  DashboardCharts,
+  defaultDashboardFilters,
+  filterFindings,
+  IncidentPanel,
+  LogDetailDrawer,
+  MainLogTable,
+  MitreAttackSection,
+  SecuritySummaryCards,
+  SidebarNavigation,
+  SOCDashboardHeader,
+  ThreatIntelWidget,
+  TopRiskWidgets,
+  type DashboardFilters,
+} from "./components/SOCDashboardShell";
 
 type AnalystMode = keyof AnalysisSummary["analystReport"];
 type Theme = "dark" | "light" | "cyberpunk" | "ocean" | "inferno" | "matrix";
@@ -164,6 +180,10 @@ export default function SOCDashboard() {
   const [vizTab, setVizTab] = useState<"geo" | "mitre">("geo");
   const [toolsTab, setToolsTab] = useState<"rules" | "ioc" | "webhook" | "audit">("rules");
   const [showTools, setShowTools] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
+  const [dashboardFilters, setDashboardFilters] = useState<DashboardFilters>(defaultDashboardFilters);
 
   const { rules } = useCustomRules();
   const { iocs } = useCustomIocs();
@@ -311,14 +331,52 @@ export default function SOCDashboard() {
   };
 
   const allFindings: Finding[] = result?.findings ?? [];
+  const filteredFindings = filterFindings(allFindings, dashboardFilters, language);
   const topFindings = allFindings.slice(0, 4);
 
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = window.setInterval(() => {
+      if (!isAnalyzing && logInput.trim()) analyzeText(logInput);
+    }, 60_000);
+    return () => window.clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRefresh, isAnalyzing, logInput]);
+
+  function exportReportJson() {
+    if (!result) return;
+    const blob = new Blob([JSON.stringify({ ...result, filteredFindings }, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `soc-report-${Date.now()}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="flex min-h-screen bg-zinc-950 text-zinc-100" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <SidebarNavigation
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((value) => !value)}
+        criticalCount={result?.summary.criticalAlerts || 0}
+      />
+      <div className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+        <SOCDashboardHeader
+          result={result}
+          filters={dashboardFilters}
+          setFilters={setDashboardFilters}
+          onAnalyze={() => analyzeText(logInput)}
+          onExport={exportReportJson}
+          autoRefresh={autoRefresh}
+          setAutoRefresh={setAutoRefresh}
+          isAnalyzing={isAnalyzing}
+        />
 
         {/* ── Header ── */}
-        <header className="flex flex-col gap-4 border-b border-zinc-800 pb-5 lg:flex-row lg:items-end lg:justify-between">
+        <header className="flex flex-col gap-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-cyan-300">Log Analysis</p>
@@ -364,15 +422,20 @@ export default function SOCDashboard() {
                 ⚙️ Tools ({rules.filter((r) => r.enabled).length} rules · {iocs.length} IOCs)
               </button>
             </div>
-            <h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">{t.title}</h1>
-            <p className="mt-2 max-w-3xl text-sm text-zinc-400">{t.subtitle}</p>
+            <p className="mt-3 max-w-3xl text-sm text-zinc-400">{t.subtitle}</p>
           </div>
           <div className="grid grid-cols-3 gap-2 sm:min-w-80">
             <Metric label="Rules" value="30+" />
-            <Metric label="Types" value="15" />
-            <Metric label="Intel" value="MITRE" />
+            <Metric label="Sources" value="15" />
+            <Metric label="Mapped" value="MITRE" />
           </div>
         </header>
+
+        <SecuritySummaryCards result={result} />
+
+        {result && (
+          <DashboardCharts result={{ ...result, findings: filteredFindings }} />
+        )}
 
         {/* ── History panel ── */}
         {showHistory && (
@@ -520,6 +583,18 @@ export default function SOCDashboard() {
 
         {result && (
           <>
+            <AdvancedFilterBar
+              findings={allFindings}
+              filters={dashboardFilters}
+              setFilters={setDashboardFilters}
+              language={language}
+            />
+
+            <IncidentPanel
+              result={{ ...result, findings: filteredFindings }}
+              language={language}
+              onOpen={setSelectedFinding}
+            />
             {/* ── Incident Intel + Correlations ── */}
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
               <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
@@ -580,9 +655,15 @@ export default function SOCDashboard() {
                   </button>
                 ))}
               </div>
-              {vizTab === "geo" && <WorldMap findings={result.findings} language={language} t={t} />}
-              {vizTab === "mitre" && <MitreMatrix mitreTechniques={result.summary.mitreTechniques} findings={result.findings} language={language} t={t} />}
+              {vizTab === "geo" && <WorldMap findings={filteredFindings} language={language} t={t} />}
+              {vizTab === "mitre" && <MitreMatrix mitreTechniques={result.summary.mitreTechniques} findings={filteredFindings} language={language} t={t} />}
             </section>
+
+            <ThreatIntelWidget findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
+
+            <TopRiskWidgets findings={filteredFindings} />
+
+            <MitreAttackSection findings={filteredFindings} language={language} />
 
             {/* ── Findings Table + Timeline/Recommendations ── */}
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -603,10 +684,11 @@ export default function SOCDashboard() {
                       className="rounded-md border border-zinc-700 px-3 py-2 text-sm hover:border-cyan-500">{t.copySummary}</button>
                   </div>
                 </div>
-                <FindingsTable findings={allFindings} language={language} t={t} localize={localize} />
+                <MainLogTable findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
               </div>
 
               <div className="space-y-4">
+                <AlertTimeline findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
                 <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
                   <h2 className="text-lg font-semibold text-white mb-3">{t.timeline}</h2>
                   {result.summary.timeline.length === 0 ? (
@@ -632,6 +714,11 @@ export default function SOCDashboard() {
           </>
         )}
       </div>
+      <LogDetailDrawer
+        finding={selectedFinding}
+        language={language}
+        onClose={() => setSelectedFinding(null)}
+      />
     </main>
   );
 }
