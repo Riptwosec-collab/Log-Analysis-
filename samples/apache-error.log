@@ -1,0 +1,5 @@
+2026-06-10T21:16:40Z 198.51.100.44 "GET /login.php?id=1 UNION SELECT password FROM users HTTP/1.1" 403
+2026-06-10T21:17:11Z 203.0.113.9 "GET /download?file=../../../../etc/passwd HTTP/1.1" 400
+2026-06-10T21:17:45Z 198.51.100.44 "GET /search?q=' OR 1=1 -- HTTP/1.1" 403
+2026-06-10T21:18:03Z 192.0.2.10 "GET /health HTTP/1.1" 200
+2026-06-10T21:19:12Z backend error upstream connection refused while connecting to service api.internal

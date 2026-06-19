@@ -1,0 +1,56 @@
+{
+  "ips": {
+    "185.220.101.21": {
+      "type": "known_tor_exit_node",
+      "risk": "high",
+      "country": "Unknown",
+      "asn": "AS-TOR",
+      "abuseScore": 88,
+      "description": "IP อยู่ใน IOC ภายใน ควรตรวจสอบและพิจารณา Block หากไม่กระทบงาน"
+    },
+    "45.77.10.2": {
+      "type": "scanner_recon_source",
+      "risk": "high",
+      "country": "Unknown",
+      "asn": "AS-SCANNER",
+      "abuseScore": 82,
+      "description": "IP มีพฤติกรรมสแกนพอร์ตหรือ Probe Service"
+    },
+    "198.51.100.44": {
+      "type": "web_attack_source",
+      "risk": "high",
+      "country": "Reserved/Test",
+      "asn": "TEST-NET-2",
+      "abuseScore": 72,
+      "description": "IP ตัวอย่างสำหรับ Web Attack IOC"
+    }
+  },
+  "domains": {
+    "evil.example.com": {
+      "type": "malicious_domain",
+      "risk": "critical",
+      "abuseScore": 95,
+      "description": "Domain ต้องสงสัย อาจเกี่ยวข้องกับ Malware C2 หรือ Phishing"
+    },
+    "c2.bad-domain.test": {
+      "type": "command_and_control_domain",
+      "risk": "critical",
+      "abuseScore": 98,
+      "description": "Domain C2 Indicator สำหรับทดสอบ Threat Intelligence"
+    }
+  },
+  "hashes": {
+    "44d88612fea8a8f36de82e1278abb02f": {
+      "type": "malware_hash",
+      "risk": "critical",
+      "abuseScore": 99,
+      "description": "Hash อยู่ใน IOC ภายใน อาจเป็นไฟล์ Malware หรือ Tool ที่ไม่ควรพบในระบบ"
+    },
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": {
+      "type": "suspicious_hash",
+      "risk": "high",
+      "abuseScore": 80,
+      "description": "Hash ตัวอย่างสำหรับทดสอบ Hash Reputation"
+    }
+  }
+}
