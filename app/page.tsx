@@ -18,6 +18,17 @@ import WebhookSettings, { getWebhookConfig } from "./components/WebhookSettings"
 import AuditLog from "./components/AuditLog";
 
 type AnalystMode = keyof AnalysisSummary["analystReport"];
+type Theme = "dark" | "light" | "cyberpunk" | "ocean" | "inferno" | "matrix";
+
+const THEMES: Theme[] = ["dark", "light", "cyberpunk", "ocean", "inferno", "matrix"];
+const THEME_META: Record<Theme, { icon: string; label: string; color: string }> = {
+  dark:      { icon: "🌙", label: "Dark",      color: "#06b6d4" },
+  light:     { icon: "☀️", label: "Light",     color: "#0891b2" },
+  cyberpunk: { icon: "⚡", label: "Cyberpunk", color: "#a855f7" },
+  ocean:     { icon: "🌊", label: "Ocean",     color: "#0ea5e9" },
+  inferno:   { icon: "🔥", label: "Inferno",   color: "#ef4444" },
+  matrix:    { icon: "💻", label: "Matrix",    color: "#00ff41" },
+};
 
 type HistoryEntry = {
   id: string;
@@ -103,7 +114,7 @@ const analystModeLabels: Record<Language, Record<AnalystMode, string>> = {
 function Metric({ label, value, tone = "default" }: { label: string; value: string; tone?: "default" | "critical" | "warning" }) {
   const color = tone === "critical" ? "text-red-300" : tone === "warning" ? "text-amber-300" : "text-white";
   return (
-    <div className="rounded-md border border-zinc-800 bg-black p-3">
+    <div className={`rounded-md border border-zinc-800 bg-black p-3 card-3d-sm${tone === "critical" ? " critical-glow" : ""}`}>
       <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">{label}</p>
       <p className={`mt-2 font-mono text-2xl font-semibold ${color}`}>{value}</p>
     </div>
@@ -134,7 +145,8 @@ export default function SOCDashboard() {
   const [copyStatus, setCopyStatus] = useState("");
   const abortRef = useRef<AbortController | null>(null);
 
-  const [darkMode, setDarkMode] = useState(true);
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [showThemePicker, setShowThemePicker] = useState(false);
   const [progress, setProgress] = useState(0);
   const progressTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -148,14 +160,19 @@ export default function SOCDashboard() {
   const { iocs } = useCustomIocs();
   const t = UI[language];
 
-  // Dark mode
+  // Theme system
   useEffect(() => {
-    document.documentElement.classList.toggle("light", !darkMode);
-    localStorage.setItem("soc_dark", darkMode ? "1" : "0");
-  }, [darkMode]);
+    const html = document.documentElement;
+    html.classList.remove("light", "theme-cyberpunk", "theme-ocean", "theme-inferno", "theme-matrix");
+    if (theme === "light") html.classList.add("light");
+    else if (theme !== "dark") html.classList.add(`theme-${theme}`);
+    localStorage.setItem("soc_theme", theme);
+  }, [theme]);
   useEffect(() => {
-    const saved = localStorage.getItem("soc_dark");
-    if (saved === "0") setDarkMode(false);
+    const saved = localStorage.getItem("soc_theme") as Theme | null;
+    if (saved && THEMES.includes(saved)) { setTheme(saved); return; }
+    // backward compat with old soc_dark key
+    if (localStorage.getItem("soc_dark") === "0") setTheme("light");
   }, []);
 
   // History
@@ -288,7 +305,7 @@ export default function SOCDashboard() {
   const topFindings = allFindings.slice(0, 4);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 text-zinc-100" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
 
         {/* ── Header ── */}
@@ -305,11 +322,27 @@ export default function SOCDashboard() {
                   </button>
                 ))}
               </div>
-              <button onClick={() => setDarkMode((d) => !d)}
-                className="rounded-md border border-zinc-700 bg-black px-3 py-1 text-sm hover:border-cyan-500"
-                title={darkMode ? "Switch to Light" : "Switch to Dark"}>
-                {darkMode ? "☀️" : "🌙"}
-              </button>
+              <div className="relative">
+                <button onClick={() => setShowThemePicker((s) => !s)}
+                  className="rounded-md border border-zinc-700 bg-black px-3 py-1 text-sm hover:border-cyan-500 flex items-center gap-1.5"
+                  title="Change theme">
+                  <span>{THEME_META[theme].icon}</span>
+                  <span className="text-zinc-300">{THEME_META[theme].label}</span>
+                  <span className="text-zinc-600">▾</span>
+                </button>
+                {showThemePicker && (
+                  <div className="absolute top-full left-0 mt-1 z-50 rounded-lg border border-zinc-700 bg-zinc-900 p-2 shadow-2xl grid grid-cols-2 gap-1 min-w-44"
+                    onMouseLeave={() => setShowThemePicker(false)}>
+                    {THEMES.map((t) => (
+                      <button key={t} onClick={() => { setTheme(t); setShowThemePicker(false); }}
+                        className={`rounded-md px-3 py-2 text-xs font-medium flex items-center gap-2 transition-colors ${theme === t ? "bg-cyan-500 text-zinc-950" : "hover:bg-zinc-800 text-zinc-300"}`}>
+                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: THEME_META[t].color }} />
+                        {THEME_META[t].icon} {THEME_META[t].label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <button onClick={() => setShowHistory((s) => !s)}
                 className={`rounded-md border px-3 py-1 text-sm ${showHistory ? "border-cyan-500 bg-cyan-500/10 text-cyan-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-cyan-500"}`}>
                 📋 History ({history.length})
@@ -331,7 +364,7 @@ export default function SOCDashboard() {
 
         {/* ── History panel ── */}
         {showHistory && (
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold text-white">Session History</h2>
               <button onClick={() => { setHistory([]); localStorage.removeItem("soc_history"); }}
@@ -368,7 +401,7 @@ export default function SOCDashboard() {
 
         {/* ── Tools panel ── */}
         {showTools && (
-          <div className="rounded-lg border border-violet-900 bg-zinc-900 p-4">
+          <div className="rounded-lg border border-violet-900 bg-zinc-900 p-4 card-3d">
             <div className="flex flex-wrap gap-2 mb-4">
               {(["rules", "ioc", "webhook", "audit"] as const).map((tab) => (
                 <button key={tab} onClick={() => setToolsTab(tab)}
@@ -386,7 +419,7 @@ export default function SOCDashboard() {
 
         {/* ── Log Input ── */}
         <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
             <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-lg font-semibold text-white">{t.inputTitle}</h2>
               <div className="flex flex-wrap gap-2">
@@ -418,7 +451,7 @@ export default function SOCDashboard() {
 
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <button onClick={() => analyzeText(logInput)} disabled={isAnalyzing}
-                className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">
+                className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60 btn-3d">
                 {isAnalyzing ? t.analyzing : t.analyze}
               </button>
               {isAnalyzing && (
@@ -453,7 +486,7 @@ export default function SOCDashboard() {
           {result ? (
             <SummaryCards summary={result.summary} language={language} t={t} />
           ) : (
-            <aside className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+            <aside className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
               <h2 className="text-lg font-semibold text-white">{t.overview}</h2>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <Metric label={t.riskScore} value="0" />
@@ -475,7 +508,7 @@ export default function SOCDashboard() {
           <>
             {/* ── Incident Intel + Correlations ── */}
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
-              <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+              <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-white">{t.incidentIntel}</h2>
@@ -523,7 +556,7 @@ export default function SOCDashboard() {
             </section>
 
             {/* ── Geo Map / MITRE Matrix ── */}
-            <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+            <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
               <div className="flex gap-2 mb-4">
                 {(["geo", "mitre"] as const).map((tab) => (
                   <button key={tab} onClick={() => setVizTab(tab)}
@@ -538,7 +571,7 @@ export default function SOCDashboard() {
 
             {/* ── Findings Table + Timeline/Recommendations ── */}
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-              <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+              <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                   <div className="flex items-center gap-3">
                     <h2 className="text-lg font-semibold text-white">{t.eventTable}</h2>
@@ -548,7 +581,7 @@ export default function SOCDashboard() {
                     </button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <ExportMenu result={result} findings={allFindings} language={language} t={t} localize={localize} />
+                    <ExportMenu result={result} findings={allFindings} language={language} t={t} />
                     <button onClick={() => copyText("RCA", result.summary.analystReport.rca)}
                       className="rounded-md border border-zinc-700 px-3 py-2 text-sm hover:border-cyan-500">{t.copyRca}</button>
                     <button onClick={() => copyText("Summary", result.summary.analystReport.managerSummary)}
@@ -559,7 +592,7 @@ export default function SOCDashboard() {
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
                   <h2 className="text-lg font-semibold text-white mb-3">{t.timeline}</h2>
                   {result.summary.timeline.length === 0 ? (
                     <p className="text-sm text-zinc-500">{t.noTimestamp}</p>
@@ -567,7 +600,7 @@ export default function SOCDashboard() {
                     <TimelineChart timeline={result.summary.timeline} language={language} t={t} />
                   )}
                 </div>
-                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
                   <h2 className="text-lg font-semibold text-white">{t.recommendations}</h2>
                   <div className="mt-4 space-y-3">
                     {topFindings.map((finding) => (
