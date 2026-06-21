@@ -2,8 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SOC Analytics Dashboard",
-  description: "Rule-based log analysis dashboard for common security events.",
+  metadataBase: new URL("https://log-analysis-virid.vercel.app"),
+  title: "Log Analysis SOC Dashboard",
+  description: "Defensive SOC dashboard for log review, triage, filtering, MITRE mapping, and report export.",
+  openGraph: {
+    title: "Log Analysis SOC Dashboard",
+    description: "Defensive SOC dashboard for log review and report export.",
+    url: "https://log-analysis-virid.vercel.app/",
+    siteName: "Log Analysis SOC Dashboard",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
