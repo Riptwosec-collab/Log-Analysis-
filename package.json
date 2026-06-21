@@ -1,13 +1,19 @@
 {
   "name": "log-analysis",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "homepage": "https://log-analysis-virid.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Riptwosec-collab/Log-Analysis-.git"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit -p tsconfig.lint.json",
     "typecheck": "tsc --noEmit -p tsconfig.lint.json",
+    "check": "npm run typecheck && npm run build",
     "test": "jest"
   },
   "dependencies": {
