@@ -152,7 +152,7 @@ const TH_TO_EN = Object.fromEntries(Object.entries(EN_TO_TH).map(([en, th]) => [
 const originalTextNodes = new WeakMap<Text, string>();
 const attrNames = ["placeholder", "title", "aria-label"] as const;
 
-function translateCore(core: string, language: Language) {
+function translateCore(core: string, language: Language): string {
   const numbered = core.match(/^(\d+)\.\s+(.+)$/);
   if (numbered) {
     return `${numbered[1]}. ${translateCore(numbered[2], language)}`;
@@ -177,7 +177,7 @@ function translateCore(core: string, language: Language) {
   return core;
 }
 
-function translateTextValue(value: string, language: Language) {
+function translateTextValue(value: string, language: Language): string {
   const leading = value.match(/^\s*/)?.[0] ?? "";
   const trailing = value.match(/\s*$/)?.[0] ?? "";
   const core = value.trim().replace(/\s+/g, " ");
@@ -185,17 +185,17 @@ function translateTextValue(value: string, language: Language) {
   return `${leading}${translateCore(core, language)}${trailing}`;
 }
 
-function shouldSkipNode(parent: ParentNode | null) {
+function shouldSkipNode(parent: ParentNode | null): boolean {
   if (!(parent instanceof HTMLElement)) return true;
   return Boolean(parent.closest("[data-i18n-ignore], textarea, input, pre, code, script, style, svg, canvas"));
 }
 
-function applyRuntimeLanguage(language: Language) {
+function applyRuntimeLanguage(language: Language): void {
   if (typeof document === "undefined") return;
   document.documentElement.lang = language;
 
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-    acceptNode(node) {
+    acceptNode(node: Node): number {
       if (!node.nodeValue?.trim()) return NodeFilter.FILTER_REJECT;
       return shouldSkipNode(node.parentNode) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
     },
@@ -224,7 +224,7 @@ function applyRuntimeLanguage(language: Language) {
   });
 }
 
-function clickNativeLanguageButton(language: Language) {
+function clickNativeLanguageButton(language: Language): void {
   const label = language === "th" ? "ไทย" : "English";
   window.setTimeout(() => {
     const button = Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find((item) => {
@@ -235,7 +235,7 @@ function clickNativeLanguageButton(language: Language) {
   }, 0);
 }
 
-export default function ExperienceProvider({ children }: { children: ReactNode }) {
+export default function ExperienceProvider({ children }: { children: ReactNode }): ReactNode {
   const [language, setLanguageState] = useState<Language>("th");
   const [theme, setThemeState] = useState<UXTheme>("sentinel");
 
@@ -269,7 +269,7 @@ export default function ExperienceProvider({ children }: { children: ReactNode }
     };
   }, [language]);
 
-  const setLanguage = useCallback((nextLanguage: Language) => {
+  const setLanguage = useCallback((nextLanguage: Language): void => {
     setLanguageState(nextLanguage);
     clickNativeLanguageButton(nextLanguage);
   }, []);
