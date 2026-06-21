@@ -8,7 +8,6 @@ import type { Language } from "@/lib/i18n";
 import { UI, localize, severityLabel, severityClass, barClass } from "@/lib/i18n";
 import SummaryCards from "./components/SummaryCards";
 import CorrelationPanel from "./components/CorrelationPanel";
-import FindingsTable from "./components/FindingsTable";
 import ExportMenu from "./components/ExportMenu";
 import TimelineChart from "./components/TimelineChart";
 import WorldMap from "./components/WorldMap";
@@ -17,10 +16,30 @@ import CustomRulesEditor, { useCustomRules, serializeCustomRules } from "./compo
 import IocManager, { useCustomIocs } from "./components/IocManager";
 import WebhookSettings, { getWebhookConfig } from "./components/WebhookSettings";
 import AuditLog from "./components/AuditLog";
+<<<<<<< HEAD
 import LogInputPanel from "./components/LogInputPanel";
 import EvidenceDrawer from "./components/EvidenceDrawer";
 import MitreCoverage from "./components/MitreCoverage";
 import AiSummary from "./components/AiSummary";
+=======
+import {
+  AdvancedFilterBar,
+  AlertTimeline,
+  DashboardCharts,
+  defaultDashboardFilters,
+  filterFindings,
+  IncidentPanel,
+  LogDetailDrawer,
+  MainLogTable,
+  MitreAttackSection,
+  SecuritySummaryCards,
+  SidebarNavigation,
+  SOCDashboardHeader,
+  ThreatIntelWidget,
+  TopRiskWidgets,
+  type DashboardFilters,
+} from "./components/SOCDashboardShell";
+>>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
 
 type AnalystMode = keyof AnalysisSummary["analystReport"];
 type Theme = "dark" | "light" | "cyberpunk" | "ocean" | "inferno" | "matrix";
@@ -33,6 +52,15 @@ const THEME_META: Record<Theme, { icon: string; label: string; color: string }> 
   ocean:     { icon: "🌊", label: "Ocean",     color: "#0ea5e9" },
   inferno:   { icon: "🔥", label: "Inferno",   color: "#ef4444" },
   matrix:    { icon: "💻", label: "Matrix",    color: "#00ff41" },
+};
+
+const DISPLAY_THEME_META: Record<Theme, { code: string; label: string; color: string }> = {
+  dark: { code: "01", label: "Graphite", color: "#2dd4bf" },
+  light: { code: "02", label: "Daylight", color: "#0f766e" },
+  cyberpunk: { code: "03", label: "Signal", color: "#fb7185" },
+  ocean: { code: "04", label: "Harbor", color: "#38bdf8" },
+  inferno: { code: "05", label: "Ember", color: "#fb923c" },
+  matrix: { code: "06", label: "Terminal", color: "#86efac" },
 };
 
 type HistoryEntry = {
@@ -161,6 +189,10 @@ export default function SOCDashboard() {
   const [selectedFinding, setSelectedFinding] = useState<import("@/lib/logAnalyzer").Finding | null>(null);
   const [toolsTab, setToolsTab] = useState<"rules" | "ioc" | "webhook" | "audit">("rules");
   const [showTools, setShowTools] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
+  const [dashboardFilters, setDashboardFilters] = useState<DashboardFilters>(defaultDashboardFilters);
 
   const { rules } = useCustomRules();
   const { iocs } = useCustomIocs();
@@ -308,14 +340,52 @@ export default function SOCDashboard() {
   };
 
   const allFindings: Finding[] = result?.findings ?? [];
+  const filteredFindings = filterFindings(allFindings, dashboardFilters, language);
   const topFindings = allFindings.slice(0, 4);
 
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = window.setInterval(() => {
+      if (!isAnalyzing && logInput.trim()) analyzeText(logInput);
+    }, 60_000);
+    return () => window.clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRefresh, isAnalyzing, logInput]);
+
+  function exportReportJson() {
+    if (!result) return;
+    const blob = new Blob([JSON.stringify({ ...result, filteredFindings }, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `soc-report-${Date.now()}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="flex min-h-screen bg-zinc-950 text-zinc-100" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <SidebarNavigation
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((value) => !value)}
+        criticalCount={result?.summary.criticalAlerts || 0}
+      />
+      <div className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+        <SOCDashboardHeader
+          result={result}
+          filters={dashboardFilters}
+          setFilters={setDashboardFilters}
+          onAnalyze={() => analyzeText(logInput)}
+          onExport={exportReportJson}
+          autoRefresh={autoRefresh}
+          setAutoRefresh={setAutoRefresh}
+          isAnalyzing={isAnalyzing}
+        />
 
         {/* ── Header ── */}
-        <header className="flex flex-col gap-4 border-b border-zinc-800 pb-5 lg:flex-row lg:items-end lg:justify-between">
+        <header className="flex flex-col gap-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-cyan-300">Log Analysis</p>
@@ -332,8 +402,8 @@ export default function SOCDashboard() {
                 <button onClick={() => setShowThemePicker((s) => !s)}
                   className="rounded-md border border-zinc-700 bg-black px-3 py-1 text-sm hover:border-cyan-500 flex items-center gap-1.5"
                   title="Change theme">
-                  <span>{THEME_META[theme].icon}</span>
-                  <span className="text-zinc-300">{THEME_META[theme].label}</span>
+                  <span className="font-mono text-xs">{DISPLAY_THEME_META[theme].code}</span>
+                  <span className="text-zinc-300">{DISPLAY_THEME_META[theme].label}</span>
                   <span className="text-zinc-600">▾</span>
                 </button>
                 {showThemePicker && (
@@ -342,19 +412,22 @@ export default function SOCDashboard() {
                     {THEMES.map((t) => (
                       <button key={t} onClick={() => { setTheme(t); setShowThemePicker(false); }}
                         className={`rounded-md px-3 py-2 text-xs font-medium flex items-center gap-2 transition-colors ${theme === t ? "bg-cyan-500 text-zinc-950" : "hover:bg-zinc-800 text-zinc-300"}`}>
-                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: THEME_META[t].color }} />
-                        {THEME_META[t].icon} {THEME_META[t].label}
+                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: DISPLAY_THEME_META[t].color }} />
+                        <span className="font-mono text-[10px]">{DISPLAY_THEME_META[t].code}</span>
+                        {DISPLAY_THEME_META[t].label}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
               <button onClick={() => setShowHistory((s) => !s)}
-                className={`rounded-md border px-3 py-1 text-sm ${showHistory ? "border-cyan-500 bg-cyan-500/10 text-cyan-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-cyan-500"}`}>
+                className={`rounded-md border px-3 py-1 text-[0px] ${showHistory ? "border-cyan-500 bg-cyan-500/10 text-cyan-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-cyan-500"}`}>
+                <span className="text-sm">History ({history.length})</span>
                 📋 History ({history.length})
               </button>
               <button onClick={() => setShowTools((s) => !s)}
-                className={`rounded-md border px-3 py-1 text-sm ${showTools ? "border-violet-500 bg-violet-500/10 text-violet-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-violet-500"}`}>
+                className={`rounded-md border px-3 py-1 text-[0px] ${showTools ? "border-violet-500 bg-violet-500/10 text-violet-200" : "border-zinc-700 bg-black text-zinc-300 hover:border-violet-500"}`}>
+                <span className="text-sm">Tools ({rules.filter((r) => r.enabled).length} rules / {iocs.length} IOCs)</span>
                 ⚙️ Tools ({rules.filter((r) => r.enabled).length} rules · {iocs.length} IOCs)
               </button>
               <Link href="/review"
@@ -366,15 +439,20 @@ export default function SOCDashboard() {
                 📋 Rules
               </Link>
             </div>
-            <h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">{t.title}</h1>
-            <p className="mt-2 max-w-3xl text-sm text-zinc-400">{t.subtitle}</p>
+            <p className="mt-3 max-w-3xl text-sm text-zinc-400">{t.subtitle}</p>
           </div>
           <div className="grid grid-cols-3 gap-2 sm:min-w-80">
             <Metric label="Rules" value="30+" />
-            <Metric label="Types" value="15" />
-            <Metric label="Intel" value="MITRE" />
+            <Metric label="Sources" value="15" />
+            <Metric label="Mapped" value="MITRE" />
           </div>
         </header>
+
+        <SecuritySummaryCards result={result} />
+
+        {result && (
+          <DashboardCharts result={{ ...result, findings: filteredFindings }} />
+        )}
 
         {/* ── History panel ── */}
         {showHistory && (
@@ -419,7 +497,8 @@ export default function SOCDashboard() {
             <div className="flex flex-wrap gap-2 mb-4">
               {(["rules", "ioc", "webhook", "audit"] as const).map((tab) => (
                 <button key={tab} onClick={() => setToolsTab(tab)}
-                  className={`rounded-md px-4 py-2 text-sm font-medium ${toolsTab === tab ? "bg-violet-600 text-white" : "border border-zinc-700 text-zinc-300 hover:border-violet-500"}`}>
+                  className={`rounded-md px-4 py-2 text-[0px] font-medium ${toolsTab === tab ? "bg-violet-600 text-white" : "border border-zinc-700 text-zinc-300 hover:border-violet-500"}`}>
+                  <span className="text-sm">{tab === "rules" ? "Custom Rules" : tab === "ioc" ? "IOC Watchlist" : tab === "webhook" ? "Alerts" : "Audit Log"}</span>
                   {tab === "rules" ? "📋 Custom Rules" : tab === "ioc" ? "🎯 IOC Watchlist" : tab === "webhook" ? "🔔 Alerts" : "📊 Audit Log"}
                 </button>
               ))}
@@ -439,6 +518,7 @@ export default function SOCDashboard() {
               <span className="text-xs text-zinc-600">Apache · Nginx · SSH · Firewall · Windows · Syslog</span>
             </div>
 
+<<<<<<< HEAD
             <LogInputPanel
               value={logInput}
               onChange={setLogInput}
@@ -449,6 +529,23 @@ export default function SOCDashboard() {
               fileLabels={fileLabels}
               setFileLabels={setFileLabels}
             />
+=======
+            {fileLabels.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {fileLabels.map((name) => (
+                  <span key={name} className="flex items-center gap-1 rounded-full bg-zinc-800 px-3 py-1 text-[0px] text-zinc-300">
+                    <span className="text-xs">{name}</span>
+                    📄 {name}
+                    <button onClick={() => setFileLabels((f) => f.filter((l) => l !== name))} className="text-zinc-500 hover:text-red-400 ml-1">×</button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <textarea className="h-72 w-full resize-y rounded-md border border-zinc-800 bg-black p-3 font-mono text-sm leading-6 text-zinc-200 outline-none ring-cyan-500 focus:ring-2"
+              value={logInput} onChange={(e) => setLogInput(e.target.value)}
+              spellCheck={false} placeholder={t.textareaPlaceholder} />
+>>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
 
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <button onClick={() => analyzeText(logInput)} disabled={isAnalyzing}
@@ -503,6 +600,18 @@ export default function SOCDashboard() {
 
         {result && (
           <>
+            <AdvancedFilterBar
+              findings={allFindings}
+              filters={dashboardFilters}
+              setFilters={setDashboardFilters}
+              language={language}
+            />
+
+            <IncidentPanel
+              result={{ ...result, findings: filteredFindings }}
+              language={language}
+              onOpen={setSelectedFinding}
+            />
             {/* ── Incident Intel + Correlations ── */}
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
               <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
@@ -557,6 +666,7 @@ export default function SOCDashboard() {
 
             {/* ── Geo Map / MITRE Matrix / Coverage ── */}
             <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
+<<<<<<< HEAD
               <div className="flex flex-wrap gap-2 mb-4">
                 {([
                   { id: "geo",      label: "🌍 Geo Map" },
@@ -572,7 +682,26 @@ export default function SOCDashboard() {
               {vizTab === "geo" && <WorldMap findings={result.findings} language={language} t={t} />}
               {vizTab === "mitre" && <MitreMatrix mitreTechniques={result.summary.mitreTechniques} findings={result.findings} language={language} t={t} />}
               {vizTab === "coverage" && <MitreCoverage findings={result.findings} mitreTechniques={result.summary.mitreTechniques} language={language} t={t} />}
+=======
+              <div className="flex gap-2 mb-4">
+                {(["geo", "mitre"] as const).map((tab) => (
+                  <button key={tab} onClick={() => setVizTab(tab)}
+                    className={`rounded-md px-4 py-2 text-[0px] font-medium ${vizTab === tab ? "bg-cyan-500 text-zinc-950" : "border border-zinc-700 text-zinc-300 hover:border-cyan-500"}`}>
+                    <span className="text-sm">{tab === "geo" ? "Geo Map" : "MITRE ATT&CK"}</span>
+                    {tab === "geo" ? "🌍 Geo Map" : "🛡️ MITRE ATT&CK"}
+                  </button>
+                ))}
+              </div>
+              {vizTab === "geo" && <WorldMap findings={filteredFindings} language={language} t={t} />}
+              {vizTab === "mitre" && <MitreMatrix mitreTechniques={result.summary.mitreTechniques} findings={filteredFindings} language={language} t={t} />}
+>>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
             </section>
+
+            <ThreatIntelWidget findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
+
+            <TopRiskWidgets findings={filteredFindings} />
+
+            <MitreAttackSection findings={filteredFindings} language={language} />
 
             {/* ── Findings Table + Timeline/Recommendations ── */}
             <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -593,10 +722,15 @@ export default function SOCDashboard() {
                       className="rounded-md border border-zinc-700 px-3 py-2 text-sm hover:border-cyan-500">{t.copySummary}</button>
                   </div>
                 </div>
+<<<<<<< HEAD
                 <FindingsTable findings={allFindings} language={language} t={t} localize={localize} onViewEvidence={(f) => setSelectedFinding(f)} />
+=======
+                <MainLogTable findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
+>>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
               </div>
 
               <div className="space-y-4">
+                <AlertTimeline findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
                 <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
                   <h2 className="text-lg font-semibold text-white mb-3">{t.timeline}</h2>
                   {result.summary.timeline.length === 0 ? (
@@ -622,12 +756,19 @@ export default function SOCDashboard() {
           </>
         )}
       </div>
+<<<<<<< HEAD
 
       {/* ── Evidence Drawer ── */}
       <EvidenceDrawer
         finding={selectedFinding}
         onClose={() => setSelectedFinding(null)}
         language={language}
+=======
+      <LogDetailDrawer
+        finding={selectedFinding}
+        language={language}
+        onClose={() => setSelectedFinding(null)}
+>>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
       />
     </main>
   );

@@ -76,7 +76,7 @@ export async function POST(req: Request) {
         );
       }
       body = await req.json();
-      logContent = String(body.log || "");
+      logContent = readLogValue(body?.log);
     }
 
     if (!logContent.trim()) {
@@ -241,4 +241,13 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+function readLogValue(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map(readLogValue).join("\n");
+  if (value && typeof value === "object" && "value" in value) {
+    return readLogValue((value as { value: unknown }).value);
+  }
+  return "";
 }

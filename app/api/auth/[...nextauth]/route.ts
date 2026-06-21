@@ -20,7 +20,10 @@ const handler = NextAuth({
   ],
   pages: { signIn: "/login" },
   session: { strategy: "jwt" },
-  secret: process.env.NEXTAUTH_SECRET ?? "soc-dashboard-secret-change-me",
+  secret:
+    process.env.NEXTAUTH_SECRET ??
+    process.env.AUTH_SECRET ??
+    "soc-dashboard-secret-change-me",
 });
 
 export { handler as GET, handler as POST };
