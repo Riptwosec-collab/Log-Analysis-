@@ -9,6 +9,20 @@ type UXTheme = "sentinel" | "aurora" | "daylight";
 const THEME_CLASSES = ["theme-soc-sentinel", "theme-soc-aurora", "theme-soc-daylight"];
 const UX_PANEL_STORAGE_KEY = "soc_ux_panel_open";
 
+const navSectionIds = [
+  "dashboard",
+  "logs",
+  "alerts",
+  "incidents",
+  "threat-intelligence",
+  "mitre",
+  "reports",
+  "rules",
+  "assets",
+  "users",
+  "settings",
+] as const;
+
 const navRoutes = [
   "/",
   "/logs",
@@ -47,15 +61,18 @@ const EN_TO_TH: Record<string, string> = {
   "Language": "ภาษา",
   "English": "อังกฤษ",
   "Dashboard": "แดชบอร์ด",
-  "Logs": "Log",
+  "Logs": "บันทึก Log",
+  "Log": "บันทึก Log",
   "Alerts": "การแจ้งเตือน",
-  "Incidents": "Incident",
-  "Threat Intelligence": "Threat Intelligence",
+  "Incidents": "เหตุการณ์",
+  "Incident": "เหตุการณ์",
+  "Threat Intelligence": "ข่าวกรองภัยคุกคาม",
+  "Intelligence": "ข่าวกรองภัยคุกคาม",
   "MITRE ATT&CK": "MITRE ATT&CK",
   "Reports": "รายงาน",
   "Rules": "กฎตรวจจับ",
-  "Assets": "Assets",
-  "Users": "Users",
+  "Assets": "สินทรัพย์",
+  "Users": "ผู้ใช้",
   "Settings": "ตั้งค่า",
   "History": "ประวัติ",
   "Tools": "เครื่องมือ",
@@ -71,13 +88,14 @@ const EN_TO_TH: Record<string, string> = {
   "MITRE Matrix": "เมทริกซ์ MITRE",
   "ATT&CK Coverage": "ความครอบคลุม ATT&CK",
   "Back to dashboard": "กลับไปหน้าแดชบอร์ด",
+  "Return to Dashboard": "กลับไปแดชบอร์ด",
   "Saved Cases": "เคสที่บันทึกไว้",
   "Case fields": "ข้อมูลในเคส",
   "Case ID": "รหัสเคส",
   "Created time": "เวลาที่สร้าง",
   "Risk score": "คะแนนความเสี่ยง",
   "Risk level": "ระดับความเสี่ยง",
-  "Finding count": "จำนวน Findings",
+  "Finding count": "จำนวน Finding",
   "Top source IP": "Source IP ที่พบมากสุด",
   "Analyst note": "บันทึกนักวิเคราะห์",
   "Status": "สถานะ",
@@ -120,9 +138,9 @@ const EN_TO_TH: Record<string, string> = {
   "Risk Score": "คะแนนเสี่ยง",
   "Total Events": "Event ทั้งหมด",
   "Suspicious": "น่าสงสัย",
-  "Critical": "Critical",
-  "Failed Login": "Login Fail",
-  "Correlation": "Correlation",
+  "Critical": "วิกฤต",
+  "Failed Login": "เข้าสู่ระบบล้มเหลว",
+  "Correlation": "ความสัมพันธ์ของเหตุการณ์",
   "Top Source IP": "Source IP ที่พบมากที่สุด",
   "Overview": "สรุปภาพรวม",
   "Paste or upload logs": "ใส่หรืออัปโหลด Log",
@@ -130,22 +148,22 @@ const EN_TO_TH: Record<string, string> = {
   "Analyzing...": "กำลังวิเคราะห์...",
   "Cancel": "ยกเลิก",
   "Analysis Results": "ผลการวิเคราะห์",
-  "Incident Intelligence Summary": "สรุป Incident Intelligence",
-  "Top Rules": "Rule ที่พบมากสุด",
-  "Affected Users": "User ที่ได้รับผลกระทบ",
-  "Priority Actions": "Action ที่ควรทำก่อน",
-  "Copy Output": "คัดลอก Output",
+  "Incident Intelligence Summary": "สรุปข่าวกรองเหตุการณ์",
+  "Top Rules": "กฎที่พบมากสุด",
+  "Affected Users": "ผู้ใช้ที่ได้รับผลกระทบ",
+  "Priority Actions": "สิ่งที่ควรทำก่อน",
+  "Copy Output": "คัดลอกผลลัพธ์",
   "Copied": "คัดลอกแล้ว",
   "Copy failed": "คัดลอกไม่สำเร็จ",
-  "Suspicious Event Table": "ตาราง Event ที่น่าสงสัย",
+  "Suspicious Event Table": "ตารางเหตุการณ์ที่น่าสงสัย",
   "Evidence": "หลักฐาน",
-  "Root Cause": "สาเหตุ",
+  "Root Cause": "สาเหตุหลัก",
   "Impact": "ผลกระทบ",
   "Fix": "วิธีแก้",
   "Recommendations": "คำแนะนำ",
   "Timeline": "ไทม์ไลน์",
   "Manager Summary": "สรุปสำหรับหัวหน้า",
-  "Recommended Action": "Action ที่แนะนำ",
+  "Recommended Action": "แนวทางที่แนะนำ",
   "Clear Session": "ล้าง Session",
   "Showing": "แสดง",
   "of": "จาก",
@@ -168,12 +186,56 @@ const EN_TO_TH: Record<string, string> = {
   "Theme mode": "โหมดธีม",
   "Modern UI": "UI ทันสมัย",
   "Workspace module": "โมดูล Workspace",
-  "Return to Dashboard": "กลับไปแดชบอร์ด",
   "Operational view for SOC workflow. Use the dashboard analyzer output as the source of truth while this module is expanded into a full data view.": "มุมมองสำหรับงาน SOC ใช้ผลวิเคราะห์จากแดชบอร์ดเป็นข้อมูลหลักระหว่างขยายโมดูลนี้เป็นหน้าจริง",
   "What this page will include": "หน้านี้จะมีอะไรบ้าง",
   "Live table and saved filters": "ตารางสดและ filter ที่บันทึกไว้",
   "Export-ready workflow": "Workflow พร้อมส่งออก",
   "Role-based SOC actions": "Action ตามบทบาท SOC",
+  "Central view for raw log ingestion, saved filters, and source parsing status.": "ศูนย์กลางสำหรับนำเข้า Log ดิบ filter ที่บันทึกไว้ และสถานะการแยกข้อมูลจากแหล่ง Log",
+  "Review raw events, search by keyword, IP, host, user, and save common triage views.": "ตรวจ Event ดิบ ค้นหาด้วย keyword, IP, host, user และบันทึกมุมมองที่ใช้ triage บ่อย",
+  "Source health": "สถานะแหล่งข้อมูล",
+  "Track parser coverage for firewall, Windows, Linux, cloud, and application logs.": "ติดตามความครอบคลุมของ parser สำหรับ firewall, Windows, Linux, cloud และ application log",
+  "Move clean evidence into reports, tickets, or RCA output after analysis.": "ย้ายหลักฐานที่จัดระเบียบแล้วไปยังรายงาน ticket หรือ RCA หลังวิเคราะห์",
+  "SOC alert queue for severity, confidence, correlation, and escalation workflow.": "คิวแจ้งเตือน SOC สำหรับความรุนแรง ความมั่นใจ ความสัมพันธ์ และขั้นตอน escalation",
+  "Severity queue": "คิวตามความรุนแรง",
+  "Prioritize Critical and High alerts before Medium and Low signals.": "จัดลำดับ Critical และ High ก่อน Medium และ Low",
+  "Correlation context": "บริบทความสัมพันธ์",
+  "Group repeated indicators, users, assets, and techniques into incident candidates.": "รวม indicator, user, asset และ technique ที่ซ้ำกันให้เป็น candidate ของ incident",
+  "Assign triage, acknowledge alerts, and prepare next-step fix commands.": "มอบหมาย triage รับทราบ alert และเตรียมคำสั่งแก้ไขขั้นต่อไป",
+  "Incident case board for RCA, evidence, timeline, business impact, and response status.": "กระดาน incident สำหรับ RCA หลักฐาน ไทม์ไลน์ ผลกระทบธุรกิจ และสถานะการตอบสนอง",
+  "Case lifecycle": "วงจรชีวิตเคส",
+  "Move cases from New to Investigating, Contained, Resolved, or False Positive.": "ย้ายเคสจากใหม่ ไปเป็นกำลังตรวจสอบ ควบคุมแล้ว แก้ไขแล้ว หรือ false positive",
+  "Evidence timeline": "ไทม์ไลน์หลักฐาน",
+  "Combine raw log lines, source IPs, users, assets, and MITRE mapping into one story.": "รวม log ดิบ source IP user asset และ MITRE mapping ให้เป็นเรื่องเดียว",
+  "RCA handoff": "ส่งต่อ RCA",
+  "Prepare manager summary, root cause, impact, and recommended remediation.": "เตรียมสรุปผู้บริหาร สาเหตุ ผลกระทบ และแนวทางแก้ไขที่แนะนำ",
+  "Workspace for reviewing context, confidence, notes, and follow-up details.": "พื้นที่สำหรับตรวจบริบท ความมั่นใจ บันทึก และรายละเอียดติดตามผล",
+  "Context view": "มุมมองบริบท",
+  "Review signals found in analyzed logs and keep notes for follow-up.": "ตรวจสัญญาณที่พบจาก Log ที่วิเคราะห์แล้ว และเก็บบันทึกเพื่อติดตามผล",
+  "Confidence flow": "ขั้นตอนความมั่นใจ",
+  "Add asset importance, user context, and confidence scoring.": "เพิ่มความสำคัญของ asset บริบทผู้ใช้ และคะแนนความมั่นใจ",
+  "Report handoff": "ส่งต่อรายงาน",
+  "Copy clean findings into reports, cases, and notes.": "คัดลอก finding ที่จัดระเบียบแล้วไปยังรายงาน เคส และโน้ต",
+  "Tactic and technique coverage view for mapping findings to analyst-friendly categories.": "มุมมอง tactic และ technique สำหรับจับคู่ finding ให้เป็นหมวดที่นักวิเคราะห์อ่านง่าย",
+  "Coverage matrix": "เมทริกซ์ความครอบคลุม",
+  "Show tactics and techniques found in the current analysis result.": "แสดง tactic และ technique ที่พบในผลวิเคราะห์ปัจจุบัน",
+  "Technique detail": "รายละเอียด Technique",
+  "Explain evidence, confidence, and recommended response for each mapping.": "อธิบายหลักฐาน ความมั่นใจ และการตอบสนองที่แนะนำในแต่ละ mapping",
+  "Export a coverage summary for audit, RCA, and manager review.": "ส่งออกสรุปความครอบคลุมสำหรับ audit, RCA และผู้บริหาร",
+  "Asset inventory view for hosts, devices, cloud resources, and ownership context.": "มุมมอง inventory สำหรับ host, device, cloud resource และข้อมูลเจ้าของ",
+  "Asset inventory": "ทะเบียนสินทรัพย์",
+  "Track names, owners, locations, and business criticality.": "ติดตามชื่อ เจ้าของ สถานที่ และความสำคัญทางธุรกิจ",
+  "Risk context": "บริบทความเสี่ยง",
+  "Connect findings to important assets and prioritize response work.": "เชื่อม finding กับ asset สำคัญและจัดลำดับงานตอบสนอง",
+  "Operational notes": "บันทึกปฏิบัติการ",
+  "Keep support notes, owner, and last review status in one view.": "เก็บโน้ต support เจ้าของ และสถานะรีวิวล่าสุดไว้ในมุมมองเดียว",
+  "User workspace for accounts, activity context, and analyst notes.": "พื้นที่ผู้ใช้สำหรับบัญชี บริบทกิจกรรม และบันทึกนักวิเคราะห์",
+  "User timeline": "ไทม์ไลน์ผู้ใช้",
+  "Review activity trends and recent notes for each account.": "ตรวจแนวโน้มกิจกรรมและโน้ตล่าสุดของแต่ละบัญชี",
+  "Context": "บริบท",
+  "Connect events to user behavior, related assets, and review notes.": "เชื่อม event กับพฤติกรรมผู้ใช้ asset ที่เกี่ยวข้อง และโน้ตรีวิว",
+  "Case handoff": "ส่งต่อเคส",
+  "Prepare a clear user-focused summary for tickets and reports.": "เตรียมสรุปที่เน้นผู้ใช้ให้ชัดเจนสำหรับ ticket และรายงาน",
 };
 
 const TH_TO_EN = Object.fromEntries(Object.entries(EN_TO_TH).map(([en, th]) => [th, en])) as Record<string, string>;
@@ -263,6 +325,45 @@ function clickNativeLanguageButton(language: Language): void {
   }, 0);
 }
 
+function getVisibleTargets(): HTMLElement[] {
+  const seen = new Set<HTMLElement>();
+  const selectors = [
+    "main [data-nav-section]",
+    "main header",
+    "main section",
+    "main [class*='card-3d']",
+  ];
+  return selectors.flatMap((selector) => Array.from(document.querySelectorAll<HTMLElement>(selector)))
+    .filter((element) => {
+      if (seen.has(element)) return false;
+      const rect = element.getBoundingClientRect();
+      const isVisible = rect.width > 0 && rect.height > 0;
+      if (!isVisible) return false;
+      seen.add(element);
+      return true;
+    });
+}
+
+function scrollToSidebarSection(index: number): void {
+  const sectionId = navSectionIds[index];
+  if (!sectionId) return;
+
+  const explicitTarget = document.querySelector<HTMLElement>(`#${sectionId}, [data-nav-section="${sectionId}"]`);
+  const targets = getVisibleTargets();
+  const fallbackTarget = targets[Math.min(index, Math.max(targets.length - 1, 0))];
+  const target = explicitTarget || fallbackTarget || document.querySelector<HTMLElement>("main");
+
+  if (!target) return;
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function setActiveSidebarButton(activeIndex: number): void {
+  Array.from(document.querySelectorAll<HTMLButtonElement>("aside nav button")).forEach((button, index) => {
+    button.setAttribute("data-active", index === activeIndex ? "true" : "false");
+    button.classList.toggle("is-sidebar-active", index === activeIndex);
+  });
+}
+
 function installSidebarNavigation(): () => void {
   const handleClick = (event: MouseEvent): void => {
     const target = event.target instanceof HTMLElement ? event.target.closest<HTMLButtonElement>("aside nav button") : null;
@@ -270,15 +371,39 @@ function installSidebarNavigation(): () => void {
 
     const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("aside nav button"));
     const index = buttons.indexOf(target);
-    const route = navRoutes[index];
-    if (!route) return;
+    if (index < 0) return;
 
     event.preventDefault();
-    window.location.assign(route);
+    setActiveSidebarButton(index);
+
+    if (window.location.pathname !== "/") {
+      window.location.assign(`${navRoutes[0]}#${navSectionIds[index]}`);
+      return;
+    }
+
+    scrollToSidebarSection(index);
+    window.history.replaceState(null, "", `#${navSectionIds[index]}`);
+  };
+
+  const handleHashScroll = (): void => {
+    const hash = window.location.hash.replace("#", "");
+    const index = navSectionIds.indexOf(hash as (typeof navSectionIds)[number]);
+    if (index >= 0) {
+      window.setTimeout(() => {
+        setActiveSidebarButton(index);
+        scrollToSidebarSection(index);
+      }, 120);
+    }
   };
 
   document.addEventListener("click", handleClick);
-  return () => document.removeEventListener("click", handleClick);
+  window.addEventListener("hashchange", handleHashScroll);
+  handleHashScroll();
+
+  return () => {
+    document.removeEventListener("click", handleClick);
+    window.removeEventListener("hashchange", handleHashScroll);
+  };
 }
 
 export default function ExperienceProvider({ children }: { children: ReactNode }): ReactNode {
