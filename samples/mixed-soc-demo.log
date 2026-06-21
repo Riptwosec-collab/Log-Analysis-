@@ -1,0 +1,6 @@
+Jun 10 21:14:02 web-01 sshd[1204]: Failed password for invalid user admin from 198.51.100.21 port 55110 ssh2
+2026-06-10T21:16:40Z 198.51.100.44 "GET /login.php?id=1 HTTP/1.1" 403
+2026-06-10T21:18:27Z firewall DROP SRC=198.51.100.22 DST=10.0.0.12 PROTO=TCP DPT=22 SYN
+06/10/2026 09:19:44 PM Event ID 4625 Audit Failure Account Name: svc-backup Source Network Address: 192.0.2.71
+Jun 10 21:25:01 SW-CORE-01 %SW_MATM-4-MACFLAP_NOTIF: Host 6c3b.e51f.fd9f in vlan 2 is flapping between port Gi1/0/12 and port Gi1/0/20
+2026-06-10T21:30:00Z cloud event user=admin source=198.51.100.55 action=ConsoleLogin status=Failure
