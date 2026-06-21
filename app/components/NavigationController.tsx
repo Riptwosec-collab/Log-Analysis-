@@ -4,8 +4,10 @@ import { useEffect } from "react";
 
 const NAV_ROUTES: Record<string, string> = {
   dashboard: "/",
+  "แดชบอร์ด": "/",
   logs: "/logs",
   log: "/logs",
+  "บันทึก log": "/logs",
   alerts: "/alerts",
   "การแจ้งเตือน": "/alerts",
   incidents: "/incidents",
