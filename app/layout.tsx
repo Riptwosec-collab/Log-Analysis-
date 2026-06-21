@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import ExperienceProvider from "./components/ExperienceProvider";
+import LogReadingGuide from "./components/LogReadingGuide";
 import NavigationController from "./components/NavigationController";
 import "./globals.css";
 import "./experience.css";
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ExperienceProvider>
           <NavigationController />
           {children}
+          <LogReadingGuide />
         </ExperienceProvider>
       </body>
     </html>
