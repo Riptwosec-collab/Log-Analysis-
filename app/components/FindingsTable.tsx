@@ -30,12 +30,14 @@ interface Props {
   language: Language;
   t: Record<string, string>;
   localize: (v: string | null | undefined, lang: Language) => string;
+  onViewEvidence?: (finding: Finding) => void;
 }
 
 export default function FindingsTable({
   findings,
   language,
   t,
+  onViewEvidence,
 }: Props) {
   const [query, setQuery] = useState("");
   const [severity, setSeverity] = useState<Severity | "All">("All");
@@ -231,6 +233,7 @@ export default function FindingsTable({
               <th className="py-3 pr-3">{t.assetIoc}</th>
               <th className="py-3 pr-3">{t.ruleRcaFix}</th>
               <SortTh col="repeatedCount">{t.repeat}</SortTh>
+              {onViewEvidence && <th className="py-3 pr-3">Action</th>}
             </tr>
           </thead>
           <tbody>
@@ -328,6 +331,16 @@ export default function FindingsTable({
                 <td className="py-3 pr-3 font-mono text-zinc-300">
                   {finding.repeatedCount}
                 </td>
+                {onViewEvidence && (
+                  <td className="py-3 pr-3">
+                    <button
+                      onClick={() => onViewEvidence(finding)}
+                      className="rounded border border-cyan-800 bg-cyan-950/30 px-2 py-1 text-xs text-cyan-400 hover:border-cyan-600 hover:text-cyan-300 whitespace-nowrap"
+                    >
+                      🔍 Evidence
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

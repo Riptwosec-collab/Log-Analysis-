@@ -26,7 +26,7 @@ function Metric({
       ? "text-amber-300"
       : "text-white";
   return (
-    <div className="rounded-md border border-zinc-800 bg-black p-3">
+    <div className={`rounded-md border border-zinc-800 bg-black p-3 card-3d-sm${tone === "critical" ? " critical-glow" : ""}`}>
       <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">{label}</p>
       <p className={`mt-2 font-mono text-2xl font-semibold ${color}`}>{value}</p>
     </div>
@@ -65,7 +65,7 @@ function SeverityBars({
 
 export default function SummaryCards({ summary, language, t }: Props) {
   return (
-    <aside className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <aside className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
       <h2 className="text-lg font-semibold text-white">{t.overview}</h2>
       <div className="mt-4 grid grid-cols-2 gap-3">
         <Metric
