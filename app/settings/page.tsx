@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 const settings = [
-  ["Theme", "Dark, light, cyberpunk, ocean, inferno, and matrix themes."],
-  ["Language", "Thai and English dashboard labels and analyst outputs."],
+  ["Theme", "Three polished themes: Midnight SOC, Aurora Cyber, and Daylight Clean."],
+  ["Language", "Thai and English labels across dashboard, reports, history, settings, and analyst outputs."],
   ["Auto refresh", "Optional browser-side refresh while reviewing active data."],
   ["Custom rules", "Browser-local rule tuning for your environment."],
   ["IOC list", "Browser-local indicator watchlist."],
@@ -18,7 +18,7 @@ export default function SettingsPage() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Settings</p>
             <h1 className="mt-2 text-3xl font-semibold text-white">Settings & Privacy</h1>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
-              Review local settings and privacy notes before using real operational data.
+              Review theme, language, local settings, and privacy notes before using real operational data.
             </p>
           </div>
           <Link href="/" className="rounded-md border border-zinc-700 px-4 py-2 text-sm text-zinc-200 hover:border-cyan-500">Back to dashboard</Link>
