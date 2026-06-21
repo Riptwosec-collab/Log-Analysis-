@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import type { AnalysisResult, Finding } from "@/lib/logAnalyzer";
 import type { AnalysisSummary } from "@/lib/logAnalyzer";
 import type { Language } from "@/lib/i18n";
@@ -16,12 +15,6 @@ import CustomRulesEditor, { useCustomRules, serializeCustomRules } from "./compo
 import IocManager, { useCustomIocs } from "./components/IocManager";
 import WebhookSettings, { getWebhookConfig } from "./components/WebhookSettings";
 import AuditLog from "./components/AuditLog";
-<<<<<<< HEAD
-import LogInputPanel from "./components/LogInputPanel";
-import EvidenceDrawer from "./components/EvidenceDrawer";
-import MitreCoverage from "./components/MitreCoverage";
-import AiSummary from "./components/AiSummary";
-=======
 import {
   AdvancedFilterBar,
   AlertTimeline,
@@ -39,7 +32,6 @@ import {
   TopRiskWidgets,
   type DashboardFilters,
 } from "./components/SOCDashboardShell";
->>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
 
 type AnalystMode = keyof AnalysisSummary["analystReport"];
 type Theme = "dark" | "light" | "cyberpunk" | "ocean" | "inferno" | "matrix";
@@ -185,8 +177,7 @@ export default function SOCDashboard() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [fileLabels, setFileLabels] = useState<string[]>([]);
-  const [vizTab, setVizTab] = useState<"geo" | "mitre" | "coverage">("geo");
-  const [selectedFinding, setSelectedFinding] = useState<import("@/lib/logAnalyzer").Finding | null>(null);
+  const [vizTab, setVizTab] = useState<"geo" | "mitre">("geo");
   const [toolsTab, setToolsTab] = useState<"rules" | "ioc" | "webhook" | "audit">("rules");
   const [showTools, setShowTools] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -430,14 +421,6 @@ export default function SOCDashboard() {
                 <span className="text-sm">Tools ({rules.filter((r) => r.enabled).length} rules / {iocs.length} IOCs)</span>
                 ⚙️ Tools ({rules.filter((r) => r.enabled).length} rules · {iocs.length} IOCs)
               </button>
-              <Link href="/review"
-                className="rounded-md border border-zinc-700 bg-black px-3 py-1 text-sm text-zinc-300 hover:border-amber-500 hover:text-amber-300">
-                ⭐ Reviews
-              </Link>
-              <Link href="/rules"
-                className="rounded-md border border-zinc-700 bg-black px-3 py-1 text-sm text-zinc-300 hover:border-violet-500 hover:text-violet-300">
-                📋 Rules
-              </Link>
             </div>
             <p className="mt-3 max-w-3xl text-sm text-zinc-400">{t.subtitle}</p>
           </div>
@@ -513,23 +496,20 @@ export default function SOCDashboard() {
         {/* ── Log Input ── */}
         <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-lg font-semibold text-white">{t.inputTitle}</h2>
-              <span className="text-xs text-zinc-600">Apache · Nginx · SSH · Firewall · Windows · Syslog</span>
+              <div className="flex flex-wrap gap-2">
+                <select className="rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none hover:border-cyan-500"
+                  value={vendorPreset} onChange={(e) => handleVendorPreset(e.target.value)}>
+                  {vendorOptions.map((opt) => <option key={opt} value={opt}>Preset: {opt}</option>)}
+                </select>
+                <label className="inline-flex cursor-pointer items-center justify-center rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm font-medium text-zinc-200 hover:border-cyan-500">
+                  {t.upload}
+                  <input className="sr-only" type="file" multiple accept=".log,.txt,.csv" onChange={handleFileUpload} />
+                </label>
+              </div>
             </div>
 
-<<<<<<< HEAD
-            <LogInputPanel
-              value={logInput}
-              onChange={setLogInput}
-              onAnalyze={() => analyzeText(logInput)}
-              onClear={() => { setLogInput(""); setFileLabels([]); setResult(null); setError(""); }}
-              isAnalyzing={isAnalyzing}
-              language={language}
-              fileLabels={fileLabels}
-              setFileLabels={setFileLabels}
-            />
-=======
             {fileLabels.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {fileLabels.map((name) => (
@@ -545,12 +525,11 @@ export default function SOCDashboard() {
             <textarea className="h-72 w-full resize-y rounded-md border border-zinc-800 bg-black p-3 font-mono text-sm leading-6 text-zinc-200 outline-none ring-cyan-500 focus:ring-2"
               value={logInput} onChange={(e) => setLogInput(e.target.value)}
               spellCheck={false} placeholder={t.textareaPlaceholder} />
->>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
 
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <button onClick={() => analyzeText(logInput)} disabled={isAnalyzing}
-                className="rounded-md bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-zinc-950 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60 btn-3d">
-                {isAnalyzing ? t.analyzing : `🔍 ${t.analyze}`}
+                className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60 btn-3d">
+                {isAnalyzing ? t.analyzing : t.analyze}
               </button>
               {isAnalyzing && (
                 <button onClick={cancelAnalysis}
@@ -558,6 +537,10 @@ export default function SOCDashboard() {
                   {t.cancel} ×
                 </button>
               )}
+              <button onClick={() => { setLogInput(demoLog); setFileLabels([]); setResult(null); setError(""); }}
+                className="rounded-md border border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-200 hover:border-zinc-500">
+                {t.loadDemo}
+              </button>
             </div>
 
             {(isAnalyzing || progress > 0) && (
@@ -568,7 +551,7 @@ export default function SOCDashboard() {
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-zinc-800">
                   <div className="h-1.5 rounded-full transition-all duration-500"
-                    style={{ width: `${progress}%`, background: progress < 50 ? "var(--accent)" : progress < 85 ? "#8b5cf6" : "#10b981" }} />
+                    style={{ width: `${progress}%`, background: progress < 50 ? "#06b6d4" : progress < 85 ? "#8b5cf6" : "#10b981" }} />
                 </div>
               </div>
             )}
@@ -661,28 +644,8 @@ export default function SOCDashboard() {
               <CorrelationPanel correlations={result.summary.correlations} language={language} t={t} />
             </section>
 
-            {/* ── AI Summary ── */}
-            <AiSummary result={result} language={language} />
-
-            {/* ── Geo Map / MITRE Matrix / Coverage ── */}
+            {/* ── Geo Map / MITRE Matrix ── */}
             <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 card-3d">
-<<<<<<< HEAD
-              <div className="flex flex-wrap gap-2 mb-4">
-                {([
-                  { id: "geo",      label: "🌍 Geo Map" },
-                  { id: "mitre",    label: "🗂️ MITRE Matrix" },
-                  { id: "coverage", label: "🛡️ ATT&CK Coverage" },
-                ] as const).map(({ id, label }) => (
-                  <button key={id} onClick={() => setVizTab(id)}
-                    className={`rounded-md px-4 py-2 text-sm font-medium ${vizTab === id ? "bg-cyan-500 text-zinc-950" : "border border-zinc-700 text-zinc-300 hover:border-cyan-500"}`}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-              {vizTab === "geo" && <WorldMap findings={result.findings} language={language} t={t} />}
-              {vizTab === "mitre" && <MitreMatrix mitreTechniques={result.summary.mitreTechniques} findings={result.findings} language={language} t={t} />}
-              {vizTab === "coverage" && <MitreCoverage findings={result.findings} mitreTechniques={result.summary.mitreTechniques} language={language} t={t} />}
-=======
               <div className="flex gap-2 mb-4">
                 {(["geo", "mitre"] as const).map((tab) => (
                   <button key={tab} onClick={() => setVizTab(tab)}
@@ -694,7 +657,6 @@ export default function SOCDashboard() {
               </div>
               {vizTab === "geo" && <WorldMap findings={filteredFindings} language={language} t={t} />}
               {vizTab === "mitre" && <MitreMatrix mitreTechniques={result.summary.mitreTechniques} findings={filteredFindings} language={language} t={t} />}
->>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
             </section>
 
             <ThreatIntelWidget findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
@@ -722,11 +684,7 @@ export default function SOCDashboard() {
                       className="rounded-md border border-zinc-700 px-3 py-2 text-sm hover:border-cyan-500">{t.copySummary}</button>
                   </div>
                 </div>
-<<<<<<< HEAD
-                <FindingsTable findings={allFindings} language={language} t={t} localize={localize} onViewEvidence={(f) => setSelectedFinding(f)} />
-=======
                 <MainLogTable findings={filteredFindings} language={language} onOpen={setSelectedFinding} />
->>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
               </div>
 
               <div className="space-y-4">
@@ -756,19 +714,10 @@ export default function SOCDashboard() {
           </>
         )}
       </div>
-<<<<<<< HEAD
-
-      {/* ── Evidence Drawer ── */}
-      <EvidenceDrawer
-        finding={selectedFinding}
-        onClose={() => setSelectedFinding(null)}
-        language={language}
-=======
       <LogDetailDrawer
         finding={selectedFinding}
         language={language}
         onClose={() => setSelectedFinding(null)}
->>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
       />
     </main>
   );
