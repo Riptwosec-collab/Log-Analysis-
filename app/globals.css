@@ -6,18 +6,6 @@
    CSS Custom Properties — Theme System
 ══════════════════════════════════════════════ */
 :root {
-<<<<<<< HEAD
-  --bg-primary:    #09090b;
-  --bg-secondary:  #18181b;
-  --bg-card:       #18181b;
-  --text-primary:  #f4f4f5;
-  --text-muted:    #71717a;
-  --border:        #27272a;
-  --accent:        #06b6d4;
-  --accent-rgb:    6, 182, 212;
-  --accent-glow:   rgba(6, 182, 212, 0.30);
-  --accent2:       #8b5cf6;
-=======
   color-scheme: dark;
   --bg-primary: #0c0f13;
   --bg-secondary: #12171d;
@@ -34,6 +22,7 @@
   --accent-strong: #14b8a6;
   --accent-contrast: #06201d;
   --accent-soft: rgba(45, 212, 191, 0.14);
+  --accent-glow: rgba(45, 212, 191, 0.30);
   --accent-2: #f59e0b;
   --accent-2-soft: rgba(245, 158, 11, 0.15);
   --danger: #fb7185;
@@ -41,415 +30,10 @@
   --success: #34d399;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
   --ring: 0 0 0 3px rgba(45, 212, 191, 0.26);
->>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
 }
 
 /* ── Light ── */
 html.light {
-<<<<<<< HEAD
-  --bg-primary:    #f8fafc;
-  --bg-secondary:  #f1f5f9;
-  --bg-card:       #ffffff;
-  --text-primary:  #0f172a;
-  --text-muted:    #64748b;
-  --border:        #e2e8f0;
-  --accent:        #0891b2;
-  --accent-rgb:    8, 145, 178;
-  --accent-glow:   rgba(8, 145, 178, 0.20);
-  --accent2:       #7c3aed;
-}
-html.light body { background-color: #f8fafc; color: #0f172a; }
-
-/* ══════════════════════════════════════════════
-   THEME: Cyberpunk  ⚡
-   Neon purple / hot pink on deep void
-══════════════════════════════════════════════ */
-html.theme-cyberpunk {
-  --bg-primary:    #08000f;
-  --bg-secondary:  #100019;
-  --bg-card:       #0d0018;
-  --text-primary:  #f0abfc;
-  --text-muted:    #a78bfa;
-  --border:        #5b21b6;
-  --accent:        #a855f7;
-  --accent-rgb:    168, 85, 247;
-  --accent-glow:   rgba(168, 85, 247, 0.40);
-  --accent2:       #ec4899;
-}
-html.theme-cyberpunk body { background-color: #08000f; color: #f0abfc; }
-
-html.theme-cyberpunk .bg-zinc-950 { background-color: #0d0018 !important; }
-html.theme-cyberpunk .bg-zinc-900 { background-color: #120020 !important; }
-html.theme-cyberpunk .bg-black    { background-color: #08000f !important; }
-html.theme-cyberpunk .bg-zinc-800 { background-color: #1e003a !important; }
-html.theme-cyberpunk .bg-zinc-950\/60 { background-color: rgba(13,0,24,0.6) !important; }
-
-html.theme-cyberpunk .border-zinc-800,
-html.theme-cyberpunk .border-zinc-700 { border-color: #5b21b6 !important; }
-html.theme-cyberpunk .border-red-900  { border-color: #7c3aed !important; }
-
-html.theme-cyberpunk .text-white,
-html.theme-cyberpunk .text-zinc-100   { color: #f0abfc !important; }
-html.theme-cyberpunk .text-zinc-200   { color: #e879f9 !important; }
-html.theme-cyberpunk .text-zinc-300   { color: #d946ef !important; }
-html.theme-cyberpunk .text-zinc-400   { color: #a855f7 !important; }
-html.theme-cyberpunk .text-zinc-500   { color: #7c3aed !important; }
-html.theme-cyberpunk .text-zinc-950   { color: #08000f !important; }
-
-html.theme-cyberpunk .text-cyan-300   { color: #c084fc !important; }
-html.theme-cyberpunk .text-cyan-200   { color: #e879f9 !important; }
-html.theme-cyberpunk .text-cyan-400   { color: #a855f7 !important; }
-
-html.theme-cyberpunk .bg-cyan-500                 { background-color: #a855f7 !important; }
-html.theme-cyberpunk .hover\:bg-cyan-400:hover    { background-color: #c084fc !important; }
-html.theme-cyberpunk .border-cyan-500             { border-color: #a855f7 !important; }
-html.theme-cyberpunk .hover\:border-cyan-500:hover { border-color: #a855f7 !important; }
-html.theme-cyberpunk .bg-cyan-500\/10             { background-color: rgba(168,85,247,0.12) !important; }
-html.theme-cyberpunk .ring-cyan-500               { --tw-ring-color: #a855f7 !important; }
-html.theme-cyberpunk .border-l-2.border-cyan-500  { border-color: #ec4899 !important; }
-
-html.theme-cyberpunk .bg-violet-600               { background-color: #ec4899 !important; }
-html.theme-cyberpunk .border-violet-500           { border-color: #ec4899 !important; }
-html.theme-cyberpunk .border-violet-900           { border-color: #86198f !important; }
-html.theme-cyberpunk .hover\:border-violet-500:hover { border-color: #ec4899 !important; }
-html.theme-cyberpunk .bg-violet-500\/10           { background-color: rgba(236,72,153,0.12) !important; }
-html.theme-cyberpunk .text-violet-200             { color: #f0abfc !important; }
-
-html.theme-cyberpunk h1,
-html.theme-cyberpunk h2 {
-  text-shadow: 0 0 12px rgba(168,85,247,0.60), 0 0 36px rgba(168,85,247,0.25);
-}
-
-/* ══════════════════════════════════════════════
-   THEME: Ocean  🌊
-   Deep navy / sky blue — calm & precise
-══════════════════════════════════════════════ */
-html.theme-ocean {
-  --bg-primary:    #010d1a;
-  --bg-secondary:  #041624;
-  --bg-card:       #021020;
-  --text-primary:  #bae6fd;
-  --text-muted:    #38bdf8;
-  --border:        #0c4a6e;
-  --accent:        #0ea5e9;
-  --accent-rgb:    14, 165, 233;
-  --accent-glow:   rgba(14, 165, 233, 0.35);
-  --accent2:       #06b6d4;
-}
-html.theme-ocean body { background-color: #010d1a; color: #bae6fd; }
-
-html.theme-ocean .bg-zinc-950 { background-color: #021020 !important; }
-html.theme-ocean .bg-zinc-900 { background-color: #051829 !important; }
-html.theme-ocean .bg-black    { background-color: #010d1a !important; }
-html.theme-ocean .bg-zinc-800 { background-color: #083045 !important; }
-html.theme-ocean .bg-zinc-950\/60 { background-color: rgba(2,16,32,0.6) !important; }
-
-html.theme-ocean .border-zinc-800,
-html.theme-ocean .border-zinc-700 { border-color: #0c4a6e !important; }
-html.theme-ocean .border-red-900  { border-color: #164e63 !important; }
-
-html.theme-ocean .text-white,
-html.theme-ocean .text-zinc-100   { color: #bae6fd !important; }
-html.theme-ocean .text-zinc-200   { color: #7dd3fc !important; }
-html.theme-ocean .text-zinc-300   { color: #38bdf8 !important; }
-html.theme-ocean .text-zinc-400   { color: #0ea5e9 !important; }
-html.theme-ocean .text-zinc-500   { color: #0284c7 !important; }
-html.theme-ocean .text-zinc-950   { color: #010d1a !important; }
-
-html.theme-ocean .text-cyan-300   { color: #38bdf8 !important; }
-html.theme-ocean .text-cyan-200   { color: #7dd3fc !important; }
-html.theme-ocean .text-cyan-400   { color: #0ea5e9 !important; }
-
-html.theme-ocean .bg-cyan-500                  { background-color: #0284c7 !important; }
-html.theme-ocean .hover\:bg-cyan-400:hover     { background-color: #0ea5e9 !important; }
-html.theme-ocean .border-cyan-500              { border-color: #0ea5e9 !important; }
-html.theme-ocean .hover\:border-cyan-500:hover { border-color: #0ea5e9 !important; }
-html.theme-ocean .bg-cyan-500\/10              { background-color: rgba(14,165,233,0.12) !important; }
-html.theme-ocean .ring-cyan-500                { --tw-ring-color: #0ea5e9 !important; }
-
-html.theme-ocean .bg-violet-600                { background-color: #0369a1 !important; }
-html.theme-ocean .border-violet-500            { border-color: #0369a1 !important; }
-html.theme-ocean .border-violet-900            { border-color: #0c4a6e !important; }
-html.theme-ocean .hover\:border-violet-500:hover { border-color: #0369a1 !important; }
-html.theme-ocean .bg-violet-500\/10            { background-color: rgba(3,105,161,0.12) !important; }
-html.theme-ocean .text-violet-200              { color: #7dd3fc !important; }
-
-html.theme-ocean h1,
-html.theme-ocean h2 {
-  text-shadow: 0 0 12px rgba(14,165,233,0.50), 0 0 36px rgba(14,165,233,0.20);
-}
-
-/* ══════════════════════════════════════════════
-   THEME: Inferno  🔥
-   Deep crimson / orange — high alert SOC
-══════════════════════════════════════════════ */
-html.theme-inferno {
-  --bg-primary:    #0f0400;
-  --bg-secondary:  #1a0700;
-  --bg-card:       #120400;
-  --text-primary:  #fef2f2;
-  --text-muted:    #fca5a5;
-  --border:        #7f1d1d;
-  --accent:        #ef4444;
-  --accent-rgb:    239, 68, 68;
-  --accent-glow:   rgba(239, 68, 68, 0.40);
-  --accent2:       #f97316;
-}
-html.theme-inferno body { background-color: #0f0400; color: #fef2f2; }
-
-html.theme-inferno .bg-zinc-950 { background-color: #120400 !important; }
-html.theme-inferno .bg-zinc-900 { background-color: #1c0600 !important; }
-html.theme-inferno .bg-black    { background-color: #0f0400 !important; }
-html.theme-inferno .bg-zinc-800 { background-color: #2d0900 !important; }
-html.theme-inferno .bg-zinc-950\/60 { background-color: rgba(18,4,0,0.6) !important; }
-
-html.theme-inferno .border-zinc-800,
-html.theme-inferno .border-zinc-700 { border-color: #7f1d1d !important; }
-html.theme-inferno .border-red-900  { border-color: #991b1b !important; }
-
-html.theme-inferno .text-white,
-html.theme-inferno .text-zinc-100   { color: #fef2f2 !important; }
-html.theme-inferno .text-zinc-200   { color: #fecaca !important; }
-html.theme-inferno .text-zinc-300   { color: #fca5a5 !important; }
-html.theme-inferno .text-zinc-400   { color: #f87171 !important; }
-html.theme-inferno .text-zinc-500   { color: #ef4444 !important; }
-html.theme-inferno .text-zinc-950   { color: #fef2f2 !important; }
-
-html.theme-inferno .text-cyan-300   { color: #fb923c !important; }
-html.theme-inferno .text-cyan-200   { color: #fca5a5 !important; }
-html.theme-inferno .text-cyan-400   { color: #ef4444 !important; }
-
-html.theme-inferno .bg-cyan-500                  { background-color: #dc2626 !important; }
-html.theme-inferno .hover\:bg-cyan-400:hover     { background-color: #ef4444 !important; }
-html.theme-inferno .border-cyan-500              { border-color: #ef4444 !important; }
-html.theme-inferno .hover\:border-cyan-500:hover { border-color: #ef4444 !important; }
-html.theme-inferno .bg-cyan-500\/10              { background-color: rgba(239,68,68,0.12) !important; }
-html.theme-inferno .ring-cyan-500                { --tw-ring-color: #ef4444 !important; }
-
-html.theme-inferno .bg-violet-600                { background-color: #c2410c !important; }
-html.theme-inferno .border-violet-500            { border-color: #c2410c !important; }
-html.theme-inferno .border-violet-900            { border-color: #7c2d12 !important; }
-html.theme-inferno .hover\:border-violet-500:hover { border-color: #c2410c !important; }
-html.theme-inferno .bg-violet-500\/10            { background-color: rgba(194,65,12,0.12) !important; }
-html.theme-inferno .text-violet-200              { color: #fca5a5 !important; }
-
-html.theme-inferno h1,
-html.theme-inferno h2 {
-  text-shadow: 0 0 14px rgba(239,68,68,0.55), 0 0 40px rgba(249,115,22,0.20);
-}
-
-/* ══════════════════════════════════════════════
-   THEME: Matrix  💻
-   CRT terminal green — classic hacker aesthetic
-══════════════════════════════════════════════ */
-html.theme-matrix {
-  --bg-primary:    #000000;
-  --bg-secondary:  #001200;
-  --bg-card:       #000b00;
-  --text-primary:  #00ff41;
-  --text-muted:    #00bb30;
-  --border:        #004010;
-  --accent:        #00ff41;
-  --accent-rgb:    0, 255, 65;
-  --accent-glow:   rgba(0, 255, 65, 0.30);
-  --accent2:       #00cc33;
-}
-html.theme-matrix body {
-  background-color: #000000;
-  color: #00ff41;
-  font-family: 'Courier New', 'Courier', monospace;
-}
-
-html.theme-matrix .bg-zinc-950 { background-color: #000b00 !important; }
-html.theme-matrix .bg-zinc-900 { background-color: #001200 !important; }
-html.theme-matrix .bg-black    { background-color: #000000 !important; }
-html.theme-matrix .bg-zinc-800 { background-color: #001e00 !important; }
-html.theme-matrix .bg-zinc-950\/60 { background-color: rgba(0,11,0,0.6) !important; }
-
-html.theme-matrix .border-zinc-800,
-html.theme-matrix .border-zinc-700 { border-color: #004010 !important; }
-html.theme-matrix .border-red-900  { border-color: #005500 !important; }
-
-html.theme-matrix .text-white,
-html.theme-matrix .text-zinc-100   { color: #00ff41 !important; }
-html.theme-matrix .text-zinc-200   { color: #00e639 !important; }
-html.theme-matrix .text-zinc-300   { color: #00cc33 !important; }
-html.theme-matrix .text-zinc-400   { color: #00aa28 !important; }
-html.theme-matrix .text-zinc-500   { color: #008820 !important; }
-html.theme-matrix .text-zinc-950   { color: #000000 !important; }
-
-html.theme-matrix .text-cyan-300   { color: #00ff41 !important; }
-html.theme-matrix .text-cyan-200   { color: #00e639 !important; }
-html.theme-matrix .text-cyan-400   { color: #00cc33 !important; }
-
-html.theme-matrix .bg-cyan-500                  { background-color: #00aa28 !important; }
-html.theme-matrix .hover\:bg-cyan-400:hover     { background-color: #00cc33 !important; }
-html.theme-matrix .border-cyan-500              { border-color: #00ff41 !important; }
-html.theme-matrix .hover\:border-cyan-500:hover { border-color: #00ff41 !important; }
-html.theme-matrix .bg-cyan-500\/10              { background-color: rgba(0,255,65,0.10) !important; }
-html.theme-matrix .ring-cyan-500                { --tw-ring-color: #00ff41 !important; }
-
-html.theme-matrix .bg-violet-600                { background-color: #007722 !important; }
-html.theme-matrix .border-violet-500            { border-color: #007722 !important; }
-html.theme-matrix .border-violet-900            { border-color: #004010 !important; }
-html.theme-matrix .hover\:border-violet-500:hover { border-color: #00aa28 !important; }
-html.theme-matrix .bg-violet-500\/10            { background-color: rgba(0,119,34,0.12) !important; }
-html.theme-matrix .text-violet-200              { color: #00ff41 !important; }
-
-html.theme-matrix .text-red-300  { color: #ff4444 !important; }
-html.theme-matrix .text-red-200  { color: #ff6666 !important; }
-html.theme-matrix .text-amber-300 { color: #ffaa00 !important; }
-
-html.theme-matrix h1,
-html.theme-matrix h2 {
-  text-shadow: 0 0 10px rgba(0,255,65,0.70), 0 0 30px rgba(0,255,65,0.30);
-  letter-spacing: 0.05em;
-}
-html.theme-matrix textarea,
-html.theme-matrix pre,
-html.theme-matrix code { font-family: 'Courier New', monospace !important; }
-
-/* ══════════════════════════════════════════════
-   3D Card Effects
-══════════════════════════════════════════════ */
-.card-3d {
-  transform-style: preserve-3d;
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.28s ease;
-  box-shadow:
-    0 1px 2px  rgba(0,0,0,0.65),
-    0 4px 8px  rgba(0,0,0,0.45),
-    0 8px 16px rgba(0,0,0,0.30);
-}
-.card-3d:hover {
-  transform: translateY(-7px);
-  box-shadow:
-    0 2px 4px   rgba(0,0,0,0.70),
-    0 12px 24px rgba(0,0,0,0.55),
-    0 24px 48px rgba(0,0,0,0.30),
-    0 0 0 1px  var(--accent-glow),
-    0 0 32px 6px var(--accent-glow);
-}
-
-/* Smaller 3D lift for metric/stat cards */
-.card-3d-sm {
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.22s ease;
-  box-shadow:
-    0 1px 2px rgba(0,0,0,0.55),
-    0 2px 4px rgba(0,0,0,0.35);
-}
-.card-3d-sm:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 6px 16px rgba(0,0,0,0.55),
-    0 0 18px 2px var(--accent-glow);
-}
-
-/* ══════════════════════════════════════════════
-   3D Button Effect
-══════════════════════════════════════════════ */
-.btn-3d {
-  position: relative;
-  transition: transform 0.10s ease, box-shadow 0.10s ease;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.45), 0 0 14px var(--accent-glow);
-}
-.btn-3d:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 rgba(0,0,0,0.55), 0 0 22px var(--accent-glow);
-}
-.btn-3d:active {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 rgba(0,0,0,0.45), 0 0 8px var(--accent-glow);
-}
-
-/* ══════════════════════════════════════════════
-   Glow Utilities
-══════════════════════════════════════════════ */
-.glow-accent {
-  box-shadow: 0 0 12px 2px var(--accent-glow),
-              inset 0 0 8px rgba(var(--accent-rgb), 0.05);
-}
-.glow-border {
-  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.55),
-              0 0 22px 5px var(--accent-glow);
-}
-
-/* Critical pulsing glow — use on high-severity cards */
-@keyframes critical-pulse {
-  0%, 100% { box-shadow: 0 0 8px 2px rgba(239,68,68,0.30); }
-  50%       { box-shadow: 0 0 24px 6px rgba(239,68,68,0.70); }
-}
-.critical-glow {
-  animation: critical-pulse 2s ease-in-out infinite;
-}
-
-/* ══════════════════════════════════════════════
-   Scanline FX — Cyberpunk & Matrix only
-══════════════════════════════════════════════ */
-@keyframes scanline-sweep {
-  0%   { transform: translateY(-100vh); }
-  100% { transform: translateY(100vh); }
-}
-html.theme-cyberpunk body::after,
-html.theme-matrix body::after {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(transparent, var(--accent), transparent);
-  opacity: 0.09;
-  animation: scanline-sweep 7s linear infinite;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* CRT screen flicker for matrix (very subtle) */
-@keyframes crt-flicker {
-  0%,100% { opacity: 1; }
-  92%     { opacity: 1; }
-  93%     { opacity: 0.97; }
-  94%     { opacity: 1; }
-}
-html.theme-matrix body {
-  animation: crt-flicker 8s infinite;
-}
-
-/* ══════════════════════════════════════════════
-   Accent Gradient Line (use as <hr class="accent-line">)
-══════════════════════════════════════════════ */
-.accent-line {
-  border: none;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--accent) 0%,
-    var(--accent2, var(--accent)) 50%,
-    transparent 100%
-  );
-  margin: 0;
-  opacity: 0.6;
-}
-
-/* ══════════════════════════════════════════════
-   Progress bar accent color (overrides inline)
-══════════════════════════════════════════════ */
-.progress-bar-accent {
-  background: linear-gradient(90deg, var(--accent), var(--accent2, var(--accent)));
-}
-
-/* ══════════════════════════════════════════════
-   Smooth theme transition
-══════════════════════════════════════════════ */
-*, *::before, *::after {
-  transition-property: background-color, border-color, color;
-  transition-duration: 0.25s;
-  transition-timing-function: ease;
-}
-/* But NOT layout/transform transitions (they have their own) */
-.card-3d, .card-3d-sm, .btn-3d {
-  transition-property: transform, box-shadow;
-=======
   color-scheme: light;
   --bg-primary: #f6f0e7;
   --bg-secondary: #fffaf2;
@@ -466,6 +50,7 @@ html.theme-matrix body {
   --accent-strong: #115e59;
   --accent-contrast: #f4fffb;
   --accent-soft: rgba(15, 118, 110, 0.12);
+  --accent-glow: rgba(15, 118, 110, 0.25);
   --accent-2: #b45309;
   --accent-2-soft: rgba(180, 83, 9, 0.12);
   --danger: #be123c;
@@ -475,6 +60,7 @@ html.theme-matrix body {
   --ring: 0 0 0 3px rgba(15, 118, 110, 0.2);
 }
 
+/* ── Cyberpunk ── */
 html.theme-cyberpunk {
   --bg-primary: #130f1b;
   --bg-secondary: #1b1426;
@@ -491,10 +77,17 @@ html.theme-cyberpunk {
   --accent-strong: #f43f5e;
   --accent-contrast: #260710;
   --accent-soft: rgba(251, 113, 133, 0.14);
+  --accent-glow: rgba(251, 113, 133, 0.40);
   --accent-2: #22d3ee;
   --accent-2-soft: rgba(34, 211, 238, 0.12);
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.16);
+  --success: #34d399;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --ring: 0 0 0 3px rgba(251, 113, 133, 0.26);
 }
 
+/* ── Ocean ── */
 html.theme-ocean {
   --bg-primary: #071312;
   --bg-secondary: #0e1c1d;
@@ -511,10 +104,17 @@ html.theme-ocean {
   --accent-strong: #0ea5e9;
   --accent-contrast: #051620;
   --accent-soft: rgba(56, 189, 248, 0.13);
+  --accent-glow: rgba(56, 189, 248, 0.35);
   --accent-2: #a3e635;
   --accent-2-soft: rgba(163, 230, 53, 0.12);
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.16);
+  --success: #34d399;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.40);
+  --ring: 0 0 0 3px rgba(56, 189, 248, 0.26);
 }
 
+/* ── Inferno ── */
 html.theme-inferno {
   --bg-primary: #17110d;
   --bg-secondary: #211812;
@@ -531,10 +131,17 @@ html.theme-inferno {
   --accent-strong: #f97316;
   --accent-contrast: #241006;
   --accent-soft: rgba(251, 146, 60, 0.15);
+  --accent-glow: rgba(251, 146, 60, 0.40);
   --accent-2: #67e8f9;
   --accent-2-soft: rgba(103, 232, 249, 0.1);
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.16);
+  --success: #34d399;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.40);
+  --ring: 0 0 0 3px rgba(251, 146, 60, 0.26);
 }
 
+/* ── Matrix ── */
 html.theme-matrix {
   --bg-primary: #07100b;
   --bg-secondary: #0d1a12;
@@ -551,8 +158,14 @@ html.theme-matrix {
   --accent-strong: #22c55e;
   --accent-contrast: #04150a;
   --accent-soft: rgba(134, 239, 172, 0.13);
+  --accent-glow: rgba(134, 239, 172, 0.35);
   --accent-2: #facc15;
   --accent-2-soft: rgba(250, 204, 21, 0.12);
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.16);
+  --success: #34d399;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --ring: 0 0 0 3px rgba(134, 239, 172, 0.26);
 }
 
 @layer base {
@@ -726,5 +339,109 @@ html.theme-matrix {
   .btn-3d {
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.24);
   }
->>>>>>> ff6617e3b0b4f767bb6faaa824df5a40629b8e46
+}
+
+/* ══════════════════════════════════════════════
+   3D Card Effects
+══════════════════════════════════════════════ */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.28s ease;
+}
+.card-3d:hover {
+  transform: translateY(-7px);
+  box-shadow:
+    0 2px 4px   rgba(0,0,0,0.70),
+    0 12px 24px rgba(0,0,0,0.55),
+    0 24px 48px rgba(0,0,0,0.30),
+    0 0 0 1px  var(--accent-glow),
+    0 0 32px 6px var(--accent-glow);
+}
+
+/* Smaller 3D lift for metric/stat cards */
+.card-3d-sm {
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.22s ease;
+}
+.card-3d-sm:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.55),
+    0 0 18px 2px var(--accent-glow);
+}
+
+/* ══════════════════════════════════════════════
+   3D Button Effect
+══════════════════════════════════════════════ */
+.btn-3d {
+  position: relative;
+  transition: transform 0.10s ease, box-shadow 0.10s ease;
+}
+.btn-3d:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.55), 0 0 22px var(--accent-glow);
+}
+.btn-3d:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 rgba(0,0,0,0.45), 0 0 8px var(--accent-glow);
+}
+
+/* ══════════════════════════════════════════════
+   Glow Utilities
+══════════════════════════════════════════════ */
+.glow-accent {
+  box-shadow: 0 0 12px 2px var(--accent-glow),
+              inset 0 0 8px rgba(0, 0, 0, 0.05);
+}
+.glow-border {
+  box-shadow: 0 0 0 1px var(--accent-glow),
+              0 0 22px 5px var(--accent-glow);
+}
+
+/* Critical pulsing glow — use on high-severity cards */
+@keyframes critical-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(239,68,68,0.30); }
+  50%       { box-shadow: 0 0 24px 6px rgba(239,68,68,0.70); }
+}
+.critical-glow {
+  animation: critical-pulse 2s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════
+   Scanline FX — Cyberpunk & Matrix only
+══════════════════════════════════════════════ */
+@keyframes scanline-sweep {
+  0%   { transform: translateY(-100vh); }
+  100% { transform: translateY(100vh); }
+}
+html.theme-cyberpunk body::after,
+html.theme-matrix body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(transparent, var(--accent), transparent);
+  opacity: 0.09;
+  animation: scanline-sweep 7s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Matrix monospace font */
+html.theme-matrix textarea,
+html.theme-matrix pre,
+html.theme-matrix code { font-family: 'Courier New', monospace !important; }
+
+/* ══════════════════════════════════════════════
+   Smooth theme transition
+══════════════════════════════════════════════ */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+}
+/* Preserve transform transitions on 3D elements */
+.card-3d, .card-3d-sm, .btn-3d {
+  transition-property: transform, box-shadow;
 }
