@@ -116,6 +116,7 @@ body::after {
 
 main {
   position: relative;
+  scroll-behavior: smooth;
 }
 
 main > div,
@@ -208,6 +209,21 @@ a.bg-cyan-500,
 .text-violet-300,
 .text-purple-300 {
   text-shadow: 0 0 22px var(--accent-glow);
+}
+
+aside nav button[data-active="true"],
+aside nav button.is-sidebar-active {
+  border-color: var(--border-strong) !important;
+  background: var(--accent-soft) !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 0 22px var(--accent-soft) !important;
+}
+
+aside nav button[data-active="false"] {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
 }
 
 .ux-command-center {
