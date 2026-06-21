@@ -1,0 +1,3 @@
+{"eventTime":"2026-06-10T21:30:00Z","eventSource":"signin.amazonaws.com","eventName":"ConsoleLogin","sourceIPAddress":"198.51.100.55","userIdentity":{"userName":"admin"},"responseElements":{"ConsoleLogin":"Failure"}}
+{"eventTime":"2026-06-10T21:31:15Z","eventSource":"iam.amazonaws.com","eventName":"CreateUser","sourceIPAddress":"198.51.100.55","userIdentity":{"userName":"admin"}}
+{"eventTime":"2026-06-10T21:32:10Z","eventSource":"ec2.amazonaws.com","eventName":"AuthorizeSecurityGroupIngress","sourceIPAddress":"198.51.100.55","userIdentity":{"userName":"admin"}}
