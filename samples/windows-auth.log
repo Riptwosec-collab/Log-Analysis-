@@ -1,0 +1,5 @@
+06/10/2026 09:19:44 PM Event ID 4625 Audit Failure Account Name: svc-backup Source Network Address: 192.0.2.71
+06/10/2026 09:19:48 PM Event ID 4625 Audit Failure Account Name: admin Source Network Address: 192.0.2.71
+06/10/2026 09:20:44 PM Event ID 4672 Special privileges assigned Account Name: admin Source Network Address: 192.0.2.71
+06/10/2026 09:21:44 PM Event ID 4720 A user account was created Account Name: temp-admin Source Network Address: 192.0.2.71
+06/10/2026 09:22:44 PM Event ID 4740 A user account was locked out Account Name: finance01 Source Network Address: 192.0.2.71
