@@ -1,0 +1,166 @@
+/* 3D + interactive polish for SOC workspace */
+:root {
+  --pointer-x: 72vw;
+  --pointer-y: 28vh;
+  --pointer-x-percent: 72%;
+  --pointer-y-percent: 28%;
+  --depth-1: 0 18px 48px rgba(2, 6, 23, 0.30);
+  --depth-2: 0 28px 90px rgba(2, 6, 23, 0.46);
+  --depth-ring: 0 0 0 1px var(--accent-soft), 0 0 38px var(--accent-soft);
+}
+
+html.theme-soc-daylight {
+  --depth-1: 0 16px 38px rgba(15, 23, 42, 0.12);
+  --depth-2: 0 24px 70px rgba(15, 23, 42, 0.18);
+}
+
+.interactive-3d-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.interactive-depth-grid {
+  position: absolute;
+  inset: -12%;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size: 54px 54px;
+  transform: rotateX(62deg) translateY(-18vh) translateZ(-220px);
+  transform-origin: center top;
+  opacity: .18;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.7), transparent 74%);
+  animation: depth-grid-drift 18s linear infinite;
+}
+
+.interactive-spotlight {
+  position: absolute;
+  left: var(--pointer-x);
+  top: var(--pointer-y);
+  width: 46rem;
+  height: 46rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--accent-glow), transparent 62%);
+  filter: blur(28px);
+  opacity: .72;
+  transform: translate(-50%, -50%);
+  transition: left .16s ease-out, top .16s ease-out, opacity .25s ease;
+}
+
+.interactive-orb {
+  position: absolute;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.18), transparent 26%), var(--accent-soft);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 0 70px var(--accent-soft);
+  opacity: .34;
+}
+
+.interactive-orb-a { right: 7vw; top: 9vh; animation: orb-float-a 12s ease-in-out infinite; }
+.interactive-orb-b { left: 10vw; bottom: 9vh; width: 10rem; height: 10rem; animation: orb-float-b 15s ease-in-out infinite; }
+
+main { perspective: 1500px; }
+
+:where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], main [class*="card-3d"], .ux-command-center) {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow, border-color;
+}
+
+:where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], main [class*="card-3d"], .ux-command-center)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(560px circle at var(--pointer-x-percent) var(--pointer-y-percent), rgba(255,255,255,.16), transparent 40%);
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+
+:where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], main [class*="card-3d"], .ux-command-center):hover::before,
+:where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], main [class*="card-3d"], .ux-command-center):focus-within::before { opacity: .78; }
+
+:where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], main [class*="card-3d"], .ux-command-center) > * {
+  position: relative;
+  z-index: 1;
+}
+
+:where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], .card-3d):hover {
+  transform: translateY(-5px) rotateX(.55deg) rotateY(-.55deg) translateZ(0);
+  border-color: var(--border-strong) !important;
+  box-shadow: var(--depth-2), var(--depth-ring) !important;
+}
+
+:where(button, a[href], label[for], .ux-panel-toggle):hover {
+  transform: translateY(-3px) translateZ(18px);
+  box-shadow: 0 16px 36px rgba(0,0,0,.22), 0 0 28px var(--accent-soft);
+}
+
+:where(button, a[href], label[for], .ux-panel-toggle):active,
+:where(main article, main [class*="rounded-2xl"], main [class*="rounded-xl"]):active {
+  transform: translateY(1px) scale(.985);
+}
+
+aside nav button { position: relative; overflow: hidden; }
+aside nav button::after {
+  content: "";
+  position: absolute;
+  left: 42px;
+  right: 12px;
+  bottom: 7px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transform: translateX(-28px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+aside nav button:hover::after,
+aside nav button.is-sidebar-active::after,
+aside nav button[data-active="true"]::after { opacity: .88; transform: translateX(0); }
+aside nav button.is-sidebar-active,
+aside nav button[data-active="true"] { transform: translateX(6px) translateZ(26px); }
+
+table { border-collapse: separate; border-spacing: 0; }
+tbody tr { transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease; }
+tbody tr:hover { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent), 0 10px 28px rgba(0,0,0,.18); transform: translateX(4px); }
+
+:where(input, textarea, select):hover { border-color: var(--border-strong) !important; box-shadow: 0 0 0 1px var(--accent-soft), 0 12px 30px rgba(0,0,0,.16); }
+:where(input, textarea, select):focus { transform: translateY(-1px); box-shadow: var(--ring), 0 18px 46px rgba(0,0,0,.22) !important; }
+
+:where(span.rounded, span.rounded-full, span[class*="rounded-"]):hover { transform: translateY(-2px) translateZ(14px); box-shadow: 0 0 20px var(--accent-soft); }
+
+.ux-command-center { transform: translateZ(60px); }
+.ux-command-center.is-open { animation: ux-panel-depth-in .22s ease both; }
+.ux-theme-list button:hover,
+.ux-segment button:hover { background: var(--accent-soft); border-color: var(--border-strong); }
+
+@keyframes depth-grid-drift { from { background-position: 0 0, 0 0; } to { background-position: 54px 54px, 54px 54px; } }
+@keyframes orb-float-a { 0%,100% { transform: translate3d(0,0,-80px) rotateX(12deg); } 50% { transform: translate3d(-22px,18px,20px) rotateX(22deg) rotateY(-14deg); } }
+@keyframes orb-float-b { 0%,100% { transform: translate3d(0,0,-120px) rotateY(-10deg); } 50% { transform: translate3d(24px,-16px,10px) rotateY(18deg) rotateX(10deg); } }
+@keyframes ux-panel-depth-in { from { opacity: .78; transform: translateY(10px) scale(.985) translateZ(28px); } to { opacity: 1; transform: translateY(0) scale(1) translateZ(60px); } }
+
+@media (max-width: 768px) {
+  .interactive-depth-grid,
+  .interactive-orb { display: none; }
+  :where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], .card-3d):hover,
+  aside nav button.is-sidebar-active,
+  aside nav button[data-active="true"] { transform: translateY(-2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  .interactive-spotlight,
+  .interactive-depth-grid,
+  .interactive-orb { display: none; }
+  :where(main header, main section, main article, main aside, main [class*="rounded-2xl"], main [class*="rounded-xl"], .card-3d):hover,
+  :where(button, a[href], label[for], .ux-panel-toggle):hover,
+  tbody tr:hover { transform: none !important; }
+}
