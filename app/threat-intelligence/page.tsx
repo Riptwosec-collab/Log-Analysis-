@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import OperationalWorkspace from "../components/OperationalWorkspace";
 
-export default function Page() {
-  redirect("/intel");
+export default function ThreatIntelligencePage() {
+  return <OperationalWorkspace module="threat-intelligence" />;
 }
