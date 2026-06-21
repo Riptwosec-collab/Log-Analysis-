@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 
 type Language = "th" | "en";
 type UXTheme = "sentinel" | "aurora" | "daylight";
@@ -78,11 +79,18 @@ const EN_TO_TH: Record<string, string> = {
   "Export JSON or CSV for evidence archive, then PDF for presentation.": "ส่งออก JSON หรือ CSV เพื่อเก็บหลักฐาน แล้วค่อยส่งออก PDF สำหรับนำเสนอ",
   "Settings": "ตั้งค่า",
   "Settings & Privacy": "ตั้งค่าและความเป็นส่วนตัว",
+  "Review theme, language, local settings, and privacy notes before using real operational data.": "ตรวจธีม ภาษา การตั้งค่าในเครื่อง และหมายเหตุความเป็นส่วนตัวก่อนใช้ข้อมูลปฏิบัติการจริง",
   "Theme": "ธีม",
+  "Three polished themes: Midnight SOC, Aurora Cyber, and Daylight Clean.": "มี 3 ธีมสวยงาม: Midnight SOC, Aurora Cyber และ Daylight Clean",
+  "Thai and English labels across dashboard, reports, history, settings, and analyst outputs.": "รองรับป้ายข้อความภาษาไทยและอังกฤษทั้งแดชบอร์ด รายงาน ประวัติ ตั้งค่า และผลลัพธ์นักวิเคราะห์",
   "Auto refresh": "รีเฟรชอัตโนมัติ",
+  "Optional browser-side refresh while reviewing active data.": "รีเฟรชฝั่งเบราว์เซอร์ได้เมื่อกำลังตรวจข้อมูลที่เปลี่ยนแปลง",
   "Custom rules": "กฎที่กำหนดเอง",
+  "Browser-local rule tuning for your environment.": "ปรับแต่งกฎในเบราว์เซอร์ให้เหมาะกับสภาพแวดล้อมของคุณ",
   "IOC list": "รายการ IOC",
+  "Browser-local indicator watchlist.": "รายการ Indicator ที่เฝ้าระวังในเบราว์เซอร์",
   "Webhook": "เว็บฮุก",
+  "Optional outbound alert delivery configuration.": "ตั้งค่าการส่งแจ้งเตือนออกภายนอกแบบเลือกใช้ได้",
   "Privacy checklist": "เช็กลิสต์ความเป็นส่วนตัว",
   "Remove private values before sharing examples publicly.": "ลบข้อมูลส่วนตัวก่อนแชร์ตัวอย่างแบบสาธารณะ",
   "Mask customer names, emails, and private hostnames in screenshots.": "ปิดบังชื่อลูกค้า อีเมล และ hostname ภายในในภาพหน้าจอ",
@@ -145,6 +153,11 @@ const originalTextNodes = new WeakMap<Text, string>();
 const attrNames = ["placeholder", "title", "aria-label"] as const;
 
 function translateCore(core: string, language: Language) {
+  const numbered = core.match(/^(\d+)\.\s+(.+)$/);
+  if (numbered) {
+    return `${numbered[1]}. ${translateCore(numbered[2], language)}`;
+  }
+
   const dictionary = language === "th" ? EN_TO_TH : TH_TO_EN;
   if (dictionary[core]) return dictionary[core];
 
@@ -192,7 +205,8 @@ function applyRuntimeLanguage(language: Language) {
   while (node) {
     const original = originalTextNodes.get(node) ?? node.nodeValue ?? "";
     originalTextNodes.set(node, original);
-    node.nodeValue = translateTextValue(original, language);
+    const translated = translateTextValue(original, language);
+    if (node.nodeValue !== translated) node.nodeValue = translated;
     node = walker.nextNode() as Text | null;
   }
 
@@ -204,7 +218,8 @@ function applyRuntimeLanguage(language: Language) {
       const key = `data-i18n-origin-${attr.replace(/[^a-z]/g, "")}`;
       const original = element.getAttribute(key) ?? current;
       element.setAttribute(key, original);
-      element.setAttribute(attr, translateTextValue(original, language));
+      const translated = translateTextValue(original, language);
+      if (current !== translated) element.setAttribute(attr, translated);
     });
   });
 }
@@ -242,9 +257,16 @@ export default function ExperienceProvider({ children }: { children: ReactNode }
     window.localStorage.setItem("soc_language", language);
     applyRuntimeLanguage(language);
 
-    const observer = new MutationObserver(() => applyRuntimeLanguage(language));
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-    return () => observer.disconnect();
+    let frame = 0;
+    const observer = new MutationObserver(() => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => applyRuntimeLanguage(language));
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, [language]);
 
   const setLanguage = useCallback((nextLanguage: Language) => {
@@ -262,7 +284,7 @@ export default function ExperienceProvider({ children }: { children: ReactNode }
         <div className="ux-control-head">
           <div>
             <p className="ux-eyebrow">{language === "th" ? "ตั้งค่าหน้าเว็บ" : "Interface"}</p>
-            <h2>{language === "th" ? "UX Mode" : "UX Mode"}</h2>
+            <h2>{language === "th" ? "โหมด UX" : "UX Mode"}</h2>
           </div>
           <span className="ux-live-dot" style={{ background: activeTheme.dot }} />
         </div>
