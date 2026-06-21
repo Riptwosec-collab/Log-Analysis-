@@ -7,6 +7,21 @@ type Language = "th" | "en";
 type UXTheme = "sentinel" | "aurora" | "daylight";
 
 const THEME_CLASSES = ["theme-soc-sentinel", "theme-soc-aurora", "theme-soc-daylight"];
+const UX_PANEL_STORAGE_KEY = "soc_ux_panel_open";
+
+const navRoutes = [
+  "/",
+  "/logs",
+  "/alerts",
+  "/incidents",
+  "/threat-intelligence",
+  "/mitre",
+  "/reports",
+  "/rules",
+  "/assets",
+  "/users",
+  "/settings",
+] as const;
 
 const themeOptions: Record<UXTheme, { label: Record<Language, string>; note: Record<Language, string>; dot: string }> = {
   sentinel: {
@@ -31,9 +46,19 @@ const EN_TO_TH: Record<string, string> = {
   "SOC Log Analysis Dashboard": "แดชบอร์ดวิเคราะห์ Log สำหรับ SOC",
   "Language": "ภาษา",
   "English": "อังกฤษ",
+  "Dashboard": "แดชบอร์ด",
+  "Logs": "Log",
+  "Alerts": "การแจ้งเตือน",
+  "Incidents": "Incident",
+  "Threat Intelligence": "Threat Intelligence",
+  "MITRE ATT&CK": "MITRE ATT&CK",
+  "Reports": "รายงาน",
+  "Rules": "กฎตรวจจับ",
+  "Assets": "Assets",
+  "Users": "Users",
+  "Settings": "ตั้งค่า",
   "History": "ประวัติ",
   "Tools": "เครื่องมือ",
-  "Rules": "กฎตรวจจับ",
   "Sources": "แหล่งข้อมูล",
   "Mapped": "จับคู่แล้ว",
   "Session History": "ประวัติการวิเคราะห์",
@@ -41,10 +66,8 @@ const EN_TO_TH: Record<string, string> = {
   "No sessions yet.": "ยังไม่มีประวัติการวิเคราะห์",
   "Custom Rules": "กฎที่กำหนดเอง",
   "IOC Watchlist": "รายการ IOC ที่เฝ้าระวัง",
-  "Alerts": "การแจ้งเตือน",
   "Audit Log": "บันทึก Audit",
   "Geo Map": "แผนที่ภูมิศาสตร์",
-  "MITRE ATT&CK": "MITRE ATT&CK",
   "MITRE Matrix": "เมทริกซ์ MITRE",
   "ATT&CK Coverage": "ความครอบคลุม ATT&CK",
   "Back to dashboard": "กลับไปหน้าแดชบอร์ด",
@@ -64,7 +87,6 @@ const EN_TO_TH: Record<string, string> = {
   "Newly analyzed case waiting for review.": "เคสที่เพิ่งวิเคราะห์และรอการตรวจสอบ",
   "Analyst is checking evidence and timeline.": "นักวิเคราะห์กำลังตรวจหลักฐานและไทม์ไลน์",
   "Case has an outcome and export is ready.": "เคสมีผลสรุปแล้วและพร้อมส่งออก",
-  "Reports": "รายงาน",
   "Export Report Center": "ศูนย์ส่งออกรายงาน",
   "Machine-readable full result for automation.": "ผลลัพธ์เต็มแบบเครื่องอ่านได้สำหรับ Automation",
   "Spreadsheet-friendly finding table.": "ตาราง Finding ที่เหมาะกับ Spreadsheet",
@@ -77,7 +99,6 @@ const EN_TO_TH: Record<string, string> = {
   "Open the detail drawer and confirm evidence, source, user, asset, and mapped technique.": "เปิดรายละเอียดและตรวจหลักฐาน Source, User, Asset และ Technique ที่จับคู่ไว้",
   "Copy RCA or manager summary for the ticket.": "คัดลอก RCA หรือสรุปผู้บริหารไปใส่ Ticket",
   "Export JSON or CSV for evidence archive, then PDF for presentation.": "ส่งออก JSON หรือ CSV เพื่อเก็บหลักฐาน แล้วค่อยส่งออก PDF สำหรับนำเสนอ",
-  "Settings": "ตั้งค่า",
   "Settings & Privacy": "ตั้งค่าและความเป็นส่วนตัว",
   "Review theme, language, local settings, and privacy notes before using real operational data.": "ตรวจธีม ภาษา การตั้งค่าในเครื่อง และหมายเหตุความเป็นส่วนตัวก่อนใช้ข้อมูลปฏิบัติการจริง",
   "Theme": "ธีม",
@@ -146,6 +167,13 @@ const EN_TO_TH: Record<string, string> = {
   "UX Mode": "โหมด UX",
   "Theme mode": "โหมดธีม",
   "Modern UI": "UI ทันสมัย",
+  "Workspace module": "โมดูล Workspace",
+  "Return to Dashboard": "กลับไปแดชบอร์ด",
+  "Operational view for SOC workflow. Use the dashboard analyzer output as the source of truth while this module is expanded into a full data view.": "มุมมองสำหรับงาน SOC ใช้ผลวิเคราะห์จากแดชบอร์ดเป็นข้อมูลหลักระหว่างขยายโมดูลนี้เป็นหน้าจริง",
+  "What this page will include": "หน้านี้จะมีอะไรบ้าง",
+  "Live table and saved filters": "ตารางสดและ filter ที่บันทึกไว้",
+  "Export-ready workflow": "Workflow พร้อมส่งออก",
+  "Role-based SOC actions": "Action ตามบทบาท SOC",
 };
 
 const TH_TO_EN = Object.fromEntries(Object.entries(EN_TO_TH).map(([en, th]) => [th, en])) as Record<string, string>;
@@ -235,15 +263,36 @@ function clickNativeLanguageButton(language: Language): void {
   }, 0);
 }
 
+function installSidebarNavigation(): () => void {
+  const handleClick = (event: MouseEvent): void => {
+    const target = event.target instanceof HTMLElement ? event.target.closest<HTMLButtonElement>("aside nav button") : null;
+    if (!target) return;
+
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("aside nav button"));
+    const index = buttons.indexOf(target);
+    const route = navRoutes[index];
+    if (!route) return;
+
+    event.preventDefault();
+    window.location.assign(route);
+  };
+
+  document.addEventListener("click", handleClick);
+  return () => document.removeEventListener("click", handleClick);
+}
+
 export default function ExperienceProvider({ children }: { children: ReactNode }): ReactNode {
   const [language, setLanguageState] = useState<Language>("th");
   const [theme, setThemeState] = useState<UXTheme>("sentinel");
+  const [isUxOpen, setIsUxOpen] = useState(false);
 
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem("soc_language") as Language | null;
     const savedTheme = window.localStorage.getItem("soc_ux_theme") as UXTheme | null;
+    const savedPanel = window.localStorage.getItem(UX_PANEL_STORAGE_KEY);
     if (savedLanguage === "th" || savedLanguage === "en") setLanguageState(savedLanguage);
     if (savedTheme === "sentinel" || savedTheme === "aurora" || savedTheme === "daylight") setThemeState(savedTheme);
+    if (savedPanel === "1") setIsUxOpen(true);
   }, []);
 
   useEffect(() => {
@@ -252,6 +301,10 @@ export default function ExperienceProvider({ children }: { children: ReactNode }
     html.classList.add(`theme-soc-${theme}`);
     window.localStorage.setItem("soc_ux_theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    window.localStorage.setItem(UX_PANEL_STORAGE_KEY, isUxOpen ? "1" : "0");
+  }, [isUxOpen]);
 
   useEffect(() => {
     window.localStorage.setItem("soc_language", language);
@@ -269,6 +322,8 @@ export default function ExperienceProvider({ children }: { children: ReactNode }
     };
   }, [language]);
 
+  useEffect(() => installSidebarNavigation(), []);
+
   const setLanguage = useCallback((nextLanguage: Language): void => {
     setLanguageState(nextLanguage);
     clickNativeLanguageButton(nextLanguage);
@@ -280,45 +335,59 @@ export default function ExperienceProvider({ children }: { children: ReactNode }
   return (
     <>
       {children}
-      <aside className="ux-command-center" data-i18n-ignore data-ux-control>
-        <div className="ux-control-head">
-          <div>
-            <p className="ux-eyebrow">{language === "th" ? "ตั้งค่าหน้าเว็บ" : "Interface"}</p>
-            <h2>{language === "th" ? "โหมด UX" : "UX Mode"}</h2>
-          </div>
+      <aside className={`ux-command-center${isUxOpen ? " is-open" : " is-collapsed"}`} data-i18n-ignore data-ux-control>
+        <button
+          type="button"
+          className="ux-panel-toggle"
+          onClick={() => setIsUxOpen((value) => !value)}
+          aria-expanded={isUxOpen}
+          aria-label={isUxOpen ? (language === "th" ? "พับแผง UX" : "Collapse UX panel") : language === "th" ? "เปิดแผง UX" : "Open UX panel"}
+        >
           <span className="ux-live-dot" style={{ background: activeTheme.dot }} />
-        </div>
+          <span>{isUxOpen ? (language === "th" ? "พับ" : "Hide") : "UX"}</span>
+        </button>
 
-        <div className="ux-segment" aria-label="Language selector">
-          {(["th", "en"] as Language[]).map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setLanguage(item)}
-              className={language === item ? "is-active" : ""}
-              data-ux-lang={item}
-            >
-              {item === "th" ? "ไทย" : "EN"}
-            </button>
-          ))}
-        </div>
+        {isUxOpen && (
+          <div className="ux-panel-body">
+            <div className="ux-control-head">
+              <div>
+                <p className="ux-eyebrow">{language === "th" ? "ตั้งค่าหน้าเว็บ" : "Interface"}</p>
+                <h2>{language === "th" ? "โหมด UX" : "UX Mode"}</h2>
+              </div>
+            </div>
 
-        <div className="ux-theme-list" aria-label="Theme selector">
-          {themeEntries.map(([key, option]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setThemeState(key)}
-              className={theme === key ? "is-active" : ""}
-            >
-              <span className="ux-theme-dot" style={{ background: option.dot }} />
-              <span>
-                <strong>{option.label[language]}</strong>
-                <small>{option.note[language]}</small>
-              </span>
-            </button>
-          ))}
-        </div>
+            <div className="ux-segment" aria-label="Language selector">
+              {(["th", "en"] as Language[]).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setLanguage(item)}
+                  className={language === item ? "is-active" : ""}
+                  data-ux-lang={item}
+                >
+                  {item === "th" ? "ไทย" : "EN"}
+                </button>
+              ))}
+            </div>
+
+            <div className="ux-theme-list" aria-label="Theme selector">
+              {themeEntries.map(([key, option]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setThemeState(key)}
+                  className={theme === key ? "is-active" : ""}
+                >
+                  <span className="ux-theme-dot" style={{ background: option.dot }} />
+                  <span>
+                    <strong>{option.label[language]}</strong>
+                    <small>{option.note[language]}</small>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </aside>
     </>
   );
