@@ -31,10 +31,12 @@ const VERDICT_STYLE: Record<string, { bg: string; border: string; text: string; 
 
 function buildWhatHappened(result: AnalysisResult, language: Language): string {
   const { summary } = result;
+  const highAlerts = summary.severityCounts?.High ?? 0;
+  const mediumAlerts = summary.severityCounts?.Medium ?? 0;
   const parts: string[] = [];
   if (summary.criticalAlerts > 0) parts.push(`${summary.criticalAlerts} Critical`);
-  if (summary.highAlerts > 0) parts.push(`${summary.highAlerts} High`);
-  if (summary.mediumAlerts > 0) parts.push(`${summary.mediumAlerts} Medium`);
+  if (highAlerts > 0) parts.push(`${highAlerts} High`);
+  if (mediumAlerts > 0) parts.push(`${mediumAlerts} Medium`);
   const alertStr = parts.length > 0 ? `${parts.join(", ")} severity alerts` : "alerts";
 
   return localize(summary.incidentNarrative, language) ||
@@ -53,6 +55,7 @@ function buildMitreSection(result: AnalysisResult): string {
 export default function AiSummary({ result, language }: Props) {
   const [tab, setTab] = useState<Tab>("what");
   const { summary } = result;
+  const highAlerts = summary.severityCounts?.High ?? 0;
 
   const verdict = summary.riskLevel;
   const vs = VERDICT_STYLE[verdict] ?? VERDICT_STYLE["Suspicious"];
@@ -87,7 +90,7 @@ export default function AiSummary({ result, language }: Props) {
             <h3 className="mt-1 text-base font-semibold text-white leading-tight">
               {summary.criticalAlerts > 0
                 ? "Critical threat activity detected — immediate action required"
-                : summary.highAlerts > 0
+                : highAlerts > 0
                 ? "High-severity threats detected — investigate promptly"
                 : summary.suspiciousEvents > 0
                 ? "Suspicious activity detected — monitor and investigate"
