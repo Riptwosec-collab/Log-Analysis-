@@ -1,0 +1,4 @@
+Jun 10 21:25:01 SW-CORE-01 %SW_MATM-4-MACFLAP_NOTIF: Host 6c3b.e51f.fd9f in vlan 2 is flapping between port Gi1/0/12 and port Gi1/0/20
+Jun 10 21:25:12 SW-CORE-01 %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs on Gi1/0/15, vlan 2
+Jun 10 21:25:30 SW-CORE-01 %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/24, changed state to down
+Jun 10 21:25:40 SW-CORE-01 %SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on PortFast port Gi1/0/10. Disabling port
