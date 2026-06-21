@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import ExperienceProvider from "./components/ExperienceProvider";
+import NavigationController from "./components/NavigationController";
 import "./globals.css";
 import "./experience.css";
 
@@ -21,7 +22,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="th" suppressHydrationWarning>
       <body className="bg-zinc-950 text-zinc-100">
-        <ExperienceProvider>{children}</ExperienceProvider>
+        <ExperienceProvider>
+          <NavigationController />
+          {children}
+        </ExperienceProvider>
       </body>
     </html>
   );
