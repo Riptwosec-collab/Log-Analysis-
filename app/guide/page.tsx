@@ -9,7 +9,7 @@ export default function GuidePage() {
           <h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Log Reading Guide</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">Open this guide from the left menu as a separate page.</p>
         </header>
-        <LogReadingGuide embedded />
+        <LogReadingGuide />
       </div>
     </main>
   );
