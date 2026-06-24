@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import CategorizedLogInsights from "./components/CategorizedLogInsights";
 import DefaultLogCleaner from "./components/DefaultLogCleaner";
 import ExperienceProvider from "./components/ExperienceProvider";
 import Interactive3DLayer from "./components/Interactive3DLayer";
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <NavigationController />
           <DefaultLogCleaner />
           {children}
+          <CategorizedLogInsights />
           <LogReadingGuide />
         </ExperienceProvider>
       </body>
