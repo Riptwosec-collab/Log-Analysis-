@@ -7,6 +7,7 @@ import GuideQuickAccess from "./components/GuideQuickAccess";
 import Interactive3DLayer from "./components/Interactive3DLayer";
 import LogReadingGuide from "./components/LogReadingGuide";
 import NavigationController from "./components/NavigationController";
+import PostAnalysisWorkflow from "./components/PostAnalysisWorkflow";
 import "./globals.css";
 import "./experience.css";
 import "./interactive-3d.css";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <GuideQuickAccess />
           {children}
           <CategorizedLogInsights />
+          <PostAnalysisWorkflow />
           <LogReadingGuide />
         </ExperienceProvider>
       </body>
