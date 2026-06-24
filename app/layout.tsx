@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import DefaultLogCleaner from "./components/DefaultLogCleaner";
 import ExperienceProvider from "./components/ExperienceProvider";
 import Interactive3DLayer from "./components/Interactive3DLayer";
 import LogReadingGuide from "./components/LogReadingGuide";
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ExperienceProvider>
           <Interactive3DLayer />
           <NavigationController />
+          <DefaultLogCleaner />
           {children}
           <LogReadingGuide />
         </ExperienceProvider>
