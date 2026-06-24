@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import CategorizedLogInsights from "./components/CategorizedLogInsights";
 import DefaultLogCleaner from "./components/DefaultLogCleaner";
 import ExperienceProvider from "./components/ExperienceProvider";
+import GuideQuickAccess from "./components/GuideQuickAccess";
 import Interactive3DLayer from "./components/Interactive3DLayer";
 import LogReadingGuide from "./components/LogReadingGuide";
 import NavigationController from "./components/NavigationController";
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Interactive3DLayer />
           <NavigationController />
           <DefaultLogCleaner />
+          <GuideQuickAccess />
           {children}
           <CategorizedLogInsights />
           <LogReadingGuide />
