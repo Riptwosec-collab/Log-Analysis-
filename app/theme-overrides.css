@@ -1,0 +1,282 @@
+/* Theme refinements requested for production readability.
+   - Daylight theme becomes warm cream.
+   - Aurora theme becomes black/gold.
+   - Stronger contrast for text, fields, cards, and tables. */
+
+html.theme-soc-daylight {
+  color-scheme: light;
+  --bg-primary: #f6efe2;
+  --bg-secondary: #efe0c8;
+  --bg-card: rgba(255, 249, 238, 0.88);
+  --bg-card-strong: rgba(255, 244, 222, 0.96);
+  --bg-field: rgba(255, 252, 245, 0.98);
+  --text-primary: #24160a;
+  --text-secondary: #3a2918;
+  --text-muted: #6c553c;
+  --text-faint: #9b8468;
+  --border: rgba(113, 77, 39, 0.18);
+  --border-strong: rgba(180, 113, 36, 0.45);
+  --accent: #b86b1c;
+  --accent-strong: #8f4813;
+  --accent-contrast: #fff8ec;
+  --accent-soft: rgba(184, 107, 28, 0.14);
+  --accent-glow: rgba(184, 107, 28, 0.24);
+  --accent-2: #0f766e;
+  --accent-2-soft: rgba(15, 118, 110, 0.12);
+  --danger: #be123c;
+  --danger-soft: rgba(190, 18, 60, 0.12);
+  --success: #047857;
+  --shadow: 0 24px 70px rgba(78, 48, 20, 0.15);
+  --ring: 0 0 0 4px rgba(184, 107, 28, 0.18);
+}
+
+html.theme-soc-aurora {
+  color-scheme: dark;
+  --bg-primary: #050403;
+  --bg-secondary: #0d0903;
+  --bg-card: rgba(18, 14, 8, 0.84);
+  --bg-card-strong: rgba(31, 24, 13, 0.92);
+  --bg-field: rgba(8, 7, 5, 0.92);
+  --text-primary: #fff8df;
+  --text-secondary: #f7e8b8;
+  --text-muted: #c9ae70;
+  --text-faint: #8a7549;
+  --border: rgba(245, 196, 81, 0.22);
+  --border-strong: rgba(245, 196, 81, 0.58);
+  --accent: #f5c451;
+  --accent-strong: #d99a22;
+  --accent-contrast: #140d02;
+  --accent-soft: rgba(245, 196, 81, 0.14);
+  --accent-glow: rgba(245, 196, 81, 0.30);
+  --accent-2: #ffef9f;
+  --accent-2-soft: rgba(255, 239, 159, 0.12);
+  --danger: #ff6b6b;
+  --danger-soft: rgba(255, 107, 107, 0.14);
+  --success: #5eead4;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.68);
+  --ring: 0 0 0 4px rgba(245, 196, 81, 0.22);
+}
+
+html.theme-soc-daylight body {
+  background:
+    radial-gradient(circle at 10% -10%, rgba(184, 107, 28, 0.14), transparent 30rem),
+    radial-gradient(circle at 90% 8%, rgba(15, 118, 110, 0.10), transparent 34rem),
+    linear-gradient(135deg, #f8f0df, #efe0c8) !important;
+}
+
+html.theme-soc-aurora body {
+  background:
+    radial-gradient(circle at 12% -10%, rgba(245, 196, 81, 0.16), transparent 30rem),
+    radial-gradient(circle at 88% 4%, rgba(217, 154, 34, 0.12), transparent 34rem),
+    linear-gradient(135deg, #050403, #0d0903) !important;
+}
+
+/* Warm cream readability fixes for Tailwind hard-coded slate/white classes. */
+html.theme-soc-daylight .text-white,
+html.theme-soc-daylight .text-slate-50,
+html.theme-soc-daylight .text-slate-100,
+html.theme-soc-daylight .text-zinc-100,
+html.theme-soc-daylight .text-zinc-200 {
+  color: var(--text-primary) !important;
+}
+
+html.theme-soc-daylight .text-slate-200,
+html.theme-soc-daylight .text-slate-300,
+html.theme-soc-daylight .text-zinc-300,
+html.theme-soc-daylight .text-zinc-400 {
+  color: var(--text-secondary) !important;
+}
+
+html.theme-soc-daylight .text-slate-400,
+html.theme-soc-daylight .text-slate-500,
+html.theme-soc-daylight .text-zinc-500,
+html.theme-soc-daylight .placeholder\:text-slate-500::placeholder {
+  color: var(--text-muted) !important;
+}
+
+html.theme-soc-daylight .text-cyan-100,
+html.theme-soc-daylight .text-cyan-200,
+html.theme-soc-daylight .text-cyan-300,
+html.theme-soc-daylight .text-violet-200,
+html.theme-soc-daylight .text-violet-300 {
+  color: #8f4813 !important;
+}
+
+html.theme-soc-daylight [class*="bg-white/"],
+html.theme-soc-daylight [class*="bg-slate-"],
+html.theme-soc-daylight [class*="bg-zinc-"],
+html.theme-soc-daylight .bg-black\/20,
+html.theme-soc-daylight .bg-black\/25,
+html.theme-soc-daylight .bg-black\/30,
+html.theme-soc-daylight .bg-black\/35,
+html.theme-soc-daylight .bg-black\/40 {
+  background: rgba(255, 248, 235, 0.78) !important;
+}
+
+html.theme-soc-daylight [class*="border-white/"],
+html.theme-soc-daylight [class*="border-slate-"],
+html.theme-soc-daylight [class*="border-zinc-"] {
+  border-color: rgba(113, 77, 39, 0.20) !important;
+}
+
+html.theme-soc-daylight input,
+html.theme-soc-daylight select,
+html.theme-soc-daylight textarea,
+html.theme-soc-daylight pre {
+  color: var(--text-primary) !important;
+  background: rgba(255, 252, 245, 0.96) !important;
+  border-color: rgba(113, 77, 39, 0.24) !important;
+}
+
+html.theme-soc-daylight option {
+  color: #24160a;
+  background: #fff8ec;
+}
+
+html.theme-soc-daylight table thead,
+html.theme-soc-daylight table tr:hover {
+  background: rgba(184, 107, 28, 0.08) !important;
+}
+
+/* Black/gold readability fixes for the former purple theme. */
+html.theme-soc-aurora .text-cyan-100,
+html.theme-soc-aurora .text-cyan-200,
+html.theme-soc-aurora .text-cyan-300,
+html.theme-soc-aurora .text-violet-200,
+html.theme-soc-aurora .text-violet-300,
+html.theme-soc-aurora .text-purple-300 {
+  color: #f5c451 !important;
+  text-shadow: 0 0 24px rgba(245, 196, 81, 0.28) !important;
+}
+
+html.theme-soc-aurora [class*="border-cyan"],
+html.theme-soc-aurora [class*="border-violet"],
+html.theme-soc-aurora [class*="border-purple"] {
+  border-color: rgba(245, 196, 81, 0.45) !important;
+}
+
+html.theme-soc-aurora .bg-cyan-400,
+html.theme-soc-aurora .bg-cyan-500,
+html.theme-soc-aurora .bg-violet-600,
+html.theme-soc-aurora button.bg-cyan-500,
+html.theme-soc-aurora button.bg-violet-600 {
+  background: linear-gradient(135deg, #f5c451, #d99a22) !important;
+  color: #140d02 !important;
+}
+
+html.theme-soc-aurora input,
+html.theme-soc-aurora select,
+html.theme-soc-aurora textarea,
+html.theme-soc-aurora pre {
+  color: #fff8df !important;
+  background: rgba(8, 7, 5, 0.92) !important;
+  border-color: rgba(245, 196, 81, 0.24) !important;
+}
+
+html.theme-soc-aurora option {
+  color: #fff8df;
+  background: #0d0903;
+}
+
+html.theme-soc-aurora aside nav a[data-guide-menu-link="true"],
+html.theme-soc-aurora aside nav a:hover {
+  border-color: rgba(245, 196, 81, 0.45) !important;
+}
+
+/* Navigation and interactive states shared across themes. */
+aside nav a[data-guide-menu-link="true"] {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+aside nav a[data-guide-menu-link="true"] span:first-child {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: .75rem;
+  color: var(--accent);
+}
+
+aside nav a[data-guide-menu-link="true"].is-active,
+aside nav a[data-guide-menu-link="true"]:hover {
+  border-color: var(--border-strong);
+  background: var(--accent-soft);
+  color: var(--text-primary);
+  transform: translateX(2px);
+}
+
+.alert-detail-clickable {
+  cursor: pointer;
+}
+
+.alert-detail-clickable:hover {
+  border-color: var(--border-strong) !important;
+  box-shadow: var(--shadow), 0 0 0 1px var(--accent-soft), 0 0 36px var(--accent-soft) !important;
+}
+
+.alert-detail-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(2, 6, 23, .72);
+  backdrop-filter: blur(14px);
+}
+
+.alert-detail-modal {
+  width: min(760px, 100%);
+  max-height: min(82vh, 760px);
+  overflow: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03)), var(--bg-card-strong);
+  color: var(--text-primary);
+  box-shadow: var(--shadow), 0 0 60px var(--accent-soft);
+}
+
+.alert-detail-modal header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem;
+}
+
+.alert-detail-modal section {
+  padding: 1.25rem;
+}
+
+.alert-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .75rem;
+}
+
+.alert-detail-field {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg-field);
+  padding: .85rem;
+}
+
+.alert-detail-field small {
+  display: block;
+  color: var(--text-muted);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.alert-detail-field strong,
+.alert-detail-field p {
+  display: block;
+  margin-top: .25rem;
+  color: var(--text-primary);
+  word-break: break-word;
+}
