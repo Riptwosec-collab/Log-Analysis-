@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import AlertDetailEnhancer from "./components/AlertDetailEnhancer";
 import CategorizedLogInsights from "./components/CategorizedLogInsights";
 import DefaultLogCleaner from "./components/DefaultLogCleaner";
 import ExperienceProvider from "./components/ExperienceProvider";
-import GuideQuickAccess from "./components/GuideQuickAccess";
+import GuideMenuInjector from "./components/GuideMenuInjector";
 import Interactive3DLayer from "./components/Interactive3DLayer";
-import LogReadingGuide from "./components/LogReadingGuide";
 import NavigationController from "./components/NavigationController";
 import PostAnalysisWorkflow from "./components/PostAnalysisWorkflow";
+import WorkflowSyncBridge from "./components/WorkflowSyncBridge";
 import "./globals.css";
 import "./experience.css";
 import "./interactive-3d.css";
+import "./theme-overrides.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://log-analysis-virid.vercel.app"),
@@ -33,11 +35,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Interactive3DLayer />
           <NavigationController />
           <DefaultLogCleaner />
-          <GuideQuickAccess />
+          <GuideMenuInjector />
+          <AlertDetailEnhancer />
+          <WorkflowSyncBridge />
           {children}
           <CategorizedLogInsights />
           <PostAnalysisWorkflow />
-          <LogReadingGuide />
         </ExperienceProvider>
       </body>
     </html>
